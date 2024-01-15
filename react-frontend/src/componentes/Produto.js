@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import LivroDataService from "../services/GerencyService";
 
-const Livro = props => {
+const Produto = props => {
   const initialLivroState = {
     id: null,
     titulo: "",
