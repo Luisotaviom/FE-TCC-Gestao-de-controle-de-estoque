@@ -1,22 +1,22 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import Pagination from "@material-ui/lab/Pagination";
-import LivroDataService from "../services/GerencyService";
+import ProdutosDataService from "../services/GerencyService";
 import { useTable } from "react-table";
 
-const ListaDeLivros = (props) => {
+const ListaDeProdutos = (props) => {
   /**
    * useState é um Hook do React que permite adicionar estado a componentes de função. 
    * Neste caso, useState([]) inicializa um estado chamado "users" com um valor inicial de um array vazio []. 
    * O array vazio é passado como um valor inicial para o estado.
    */
-  const [livros, definirLivro] = useState([]);
-  const livroRef = useRef();
+  const [produtos, definirProdutos] = useState([]);
+  const produtosRef = useRef();
   const [page, setPage] = useState(1);
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(4);
   const pageSizes = [4, 8, 12];
 
-  livroRef.current = livros;
+  produtosRef.current = produtos;
 
   const buscarVariaveisDePaginacao = (page, pageSize) => {
     let params = {};
@@ -32,16 +32,16 @@ const ListaDeLivros = (props) => {
     return params;
   };
 
-  const buscarLivros = () => {
+  const buscarProdutos = () => {
     const params = buscarVariaveisDePaginacao(page, pageSize);
 
-    LivroDataService.getAll(params)
+    ProdutosDataService.getAll(params)
       .then((response) => {
         console.log(response)
-        const livros = response.data.content;
+        const produtos = response.data.content;
         const totalPages = response.data.totalPages;
 
-        definirLivro(livros);
+        definirProdutos(produtos);
         setCount(totalPages);
 
         console.log(response.data);
@@ -51,26 +51,26 @@ const ListaDeLivros = (props) => {
       });
   };
 
-  useEffect(buscarLivros, [page, pageSize]);
+  useEffect(buscarProdutos, [page, pageSize]);
 
-  const openLivro = (rowIndex) => {
-    const id = livroRef.current[rowIndex].id;
+  const openProdutos = (rowIndex) => {
+    const id = produtosRef.current[rowIndex].id;
 
-    props.history.push("/Livros/" + id);
+    props.history.push("/Produtos/" + id);
   };
 
 
-  const deleteLivro = (rowIndex) => {
-    const id = livroRef.current[rowIndex].id;
+  const deleteProdutos = (rowIndex) => {
+    const id = produtosRef.current[rowIndex].id;
 
-    LivroDataService.remove(id)
+    ProdutosDataService.remove(id)
       .then((response) => {
-        props.history.push("/Livros");
+        props.history.push("/Produtos");
 
-        let novosLivros = [...livroRef.current];
-        novosLivros.splice(rowIndex, 1);
+        let novosProdutos = [...produtosRef.current];
+        novosProdutos.splice(rowIndex, 1);
 
-        definirLivro(novosLivros);
+        definirProdutos(novosProdutos);
       })
       .catch((e) => {
         console.log(e);
@@ -121,11 +121,11 @@ const ListaDeLivros = (props) => {
           return (
             
             <div>
-              <span onClick={() => openLivro(rowIdx)}>
+              <span onClick={() => openProdutos(rowIdx)}>
                 <button type="button" className="btn btn-warning btn-sm">Editar</button>
               </span>
               &nbsp;
-              <span onClick={() => deleteLivro(rowIdx)}>
+              <span onClick={() => deleteProdutos(rowIdx)}>
                 <button type="button" className="btn btn-danger btn-sm">Remover</button>
               </span>
             </div>
@@ -144,7 +144,7 @@ const ListaDeLivros = (props) => {
     prepareRow,
   } = useTable({
     columns,
-    data: livros,
+    data: produtos,
   });
 
   return (
@@ -215,8 +215,8 @@ const ListaDeLivros = (props) => {
             ))}
           </select>
           <div className="mt-3">
-            <button type="button" className="btn btn-success" onClick={() => props.history.push("/NovoLivro")}>
-            Adicionar Livro
+            <button type="button" className="btn btn-success" onClick={() => props.history.push("/NovoProduto")}>
+            Adicionar Produtos
             </button>
           </div>
 
@@ -239,4 +239,4 @@ const ListaDeLivros = (props) => {
   );
 };
 
-export default ListaDeLivros;
+export default ListaDeProdutos;

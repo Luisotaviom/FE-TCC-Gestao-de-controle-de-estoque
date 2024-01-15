@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import LivroDataService from "../services/GerencyService";
+import ProdutoDataService from "../services/GerencyService";
 
-const CriarLivro = (props) => {
+const CriarProduto = (props) => {
   const initialUserState = {
     id: null,
     titulo: "",
@@ -11,27 +11,27 @@ const CriarLivro = (props) => {
     isbn: ""
     };
 
-  const [livro, setLivro] = useState(initialUserState);
+  const [produto, setProduto] = useState(initialUserState);
   const [submitted, setSubmitted] = useState(false);
 
   const executarValorAlterado = event => {
     const { name, value } = event.target;
-    setLivro({ ...livro, [name]: value });
+    setProduto({ ...produto, [name]: value });
   };
 
   const salvar = () => {
     var data = {
-      titulo: livro.titulo,
-      categoria: livro.categoria,
-      anopubli: livro.anopubli,
-      autor: livro.autor,
-      isbn: livro.isbn
+      titulo: produto.titulo,
+      categoria: produto.categoria,
+      anopubli: produto.anopubli,
+      autor: produto.autor,
+      isbn: produto.isbn
 
     };
     
-    LivroDataService.create(data)
+    ProdutoDataService.create(data)
       .then(response => {
-        setLivro({
+        setProduto({
           id: response.data.id,
           titulo: response.data.titulo,
           categoria: response.data.categoria,
@@ -48,12 +48,12 @@ const CriarLivro = (props) => {
   };
 
   const newUser = () => {
-    setLivro(initialUserState);
+    setProduto(initialUserState);
     setSubmitted(false);
   };
 
   const voltarParaLista = () => {
-    props.history.push("/Livros");
+    props.history.push("/Produtos");
   };
 
   return (
@@ -78,7 +78,7 @@ const CriarLivro = (props) => {
               className="form-control"
               id="titulo"
               required
-              value={livro.titulo}
+              value={produto.titulo}
               onChange={executarValorAlterado}
               name="titulo"
             />
@@ -91,7 +91,7 @@ const CriarLivro = (props) => {
               className="form-control"
               id="categoria"
               required
-              value={livro.categoria}
+              value={produto.categoria}
               onChange={executarValorAlterado}
               name="categoria"
             />
@@ -104,7 +104,7 @@ const CriarLivro = (props) => {
               className="form-control"
               id="anopubli"
               required
-              value={livro.anopubli}
+              value={produto.anopubli}
               onChange={executarValorAlterado}
               name="anopubli"
             />
@@ -117,7 +117,7 @@ const CriarLivro = (props) => {
               className="form-control"
               id="autor"
               required
-              value={livro.autor}
+              value={produto.autor}
               onChange={executarValorAlterado}
               name="autor"
             />
@@ -130,7 +130,7 @@ const CriarLivro = (props) => {
               className="form-control"
               id="isbn"
               required
-              value={livro.isbn}
+              value={produto.isbn}
               onChange={executarValorAlterado}
               name="isbn"
             />
@@ -150,4 +150,4 @@ const CriarLivro = (props) => {
   );
 };
 
-export default CriarLivro;
+export default CriarProduto;

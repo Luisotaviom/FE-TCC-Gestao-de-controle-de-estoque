@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import LivroDataService from "../services/GerencyService";
+import ProdutoDataService from "../services/GerencyService";
 
-const Produto = props => {
-  const initialLivroState = {
+const Produtos = props => {
+  const initialProdutoState = {
     id: null,
     titulo: "",
     categoria: "",
@@ -10,13 +10,13 @@ const Produto = props => {
     autor: "",
     ISBN: ""
   };
-  const [currentLivro, setCurrentLivro] = useState(initialLivroState);
+  const [currentProduto, setCurrentProduto] = useState(initialProdutoState);
   const [message, setMessage] = useState("");
 
-  const getLivro = id => {
-    LivroDataService.get(id)
+  const getProduto = id => {
+    ProdutoDataService.get(id)
       .then(response => {
-        setCurrentLivro(response.data);
+        setCurrentProduto(response.data);
         console.log(response.data);
       })
       .catch(e => {
@@ -25,20 +25,20 @@ const Produto = props => {
   };
 
   useEffect(() => {
-    getLivro(props.match.params.id);
+    getProduto(props.match.params.id);
   }, [props.match.params.id]);
 
   const handleInputChange = event => {
     const { name, value } = event.target;
-    setCurrentLivro({ ...currentLivro, [name]: value });
+    setCurrentProduto({ ...currentProduto, [name]: value });
   };
 
 
-  const updateLivro = () => {
-    LivroDataService.update(currentLivro.id, currentLivro)
+  const updateProduto = () => {
+    ProdutoDataService.update(currentProduto.id, currentProduto)
       .then(response => {
         console.log(response.data);
-        setMessage("Troca de informações sobre o livro feita com sucesso!");
+        setMessage("Troca de informações sobre o Produto feita com sucesso!");
       })
       .catch(e => {
         console.log(e);
@@ -46,14 +46,14 @@ const Produto = props => {
   };
 
   const voltarParaLista = () => {
-    props.history.push("/Livros");
+    props.history.push("/Produtos");
   };
 
   return (
     <div>
-      {currentLivro ? (
+      {currentProduto ? (
         <div className="edit-form">
-          <h4>Livro</h4>
+          <h4>Produto</h4>
           <form>
             <div className="form-group">
               <label htmlFor="title">titulo</label>
@@ -62,7 +62,7 @@ const Produto = props => {
                 className="form-control"
                 id="titulo"
                 name="titulo"
-                value={currentLivro.titulo}
+                value={currentProduto.titulo}
                 onChange={handleInputChange}
               />
             </div>
@@ -73,7 +73,7 @@ const Produto = props => {
                 className="form-control"
                 id="categoria"
                 name="categoria"
-                value={currentLivro.categoria}
+                value={currentProduto.categoria}
                 onChange={handleInputChange}
               />
             </div>
@@ -84,7 +84,7 @@ const Produto = props => {
                 className="form-control"
                 id="anopubli"
                 name="anopubli"
-                value={currentLivro.anopubli}
+                value={currentProduto.anopubli}
                 onChange={handleInputChange}
               />
             </div>
@@ -95,7 +95,7 @@ const Produto = props => {
                 className="form-control"
                 id="autor"
                 name="autor"
-                value={currentLivro.autor}
+                value={currentProduto.autor}
                 onChange={handleInputChange}
               />
             </div>
@@ -103,7 +103,7 @@ const Produto = props => {
           </form>
 
 
-          <button type="button" onClick={updateLivro} className="btn btn-success btn-sm">Atualizar</button>
+          <button type="button" onClick={updateProduto} className="btn btn-success btn-sm">Atualizar</button>
           &nbsp;
           <button onClick={voltarParaLista} className="btn btn-secondary btn-sm">Voltar</button>
 
@@ -116,11 +116,11 @@ const Produto = props => {
       ) : (
         <div>
           <br />
-          <p>Clique no livro...</p>
+          <p>Clique no Produto...</p>
         </div>
       )}
     </div>
   );
 };
 
-export default Livro;
+export default Produtos;
