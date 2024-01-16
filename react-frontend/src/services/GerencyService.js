@@ -4,7 +4,7 @@ const get = (id) => {
   return http.get(`/Produtos/${id}`);
 };
 
-const create = (data) => {
+const create = (id, data) => {
   return http.post(`/Produtos/fornecedor/${id}`/`produto`, data);
 };
 

@@ -4,11 +4,9 @@ import ProdutoDataService from "../services/GerencyService";
 const CriarProduto = (props) => {
   const initialUserState = {
     id: null,
-    titulo: "",
-    categoria: "",
-    anopubli: "",
-    autor: "",
-    isbn: ""
+    nome: "",
+    fornecedor_id: "",
+    categoria: ""
     };
 
   const [produto, setProduto] = useState(initialUserState);
@@ -21,23 +19,18 @@ const CriarProduto = (props) => {
 
   const salvar = () => {
     var data = {
-      titulo: produto.titulo,
-      categoria: produto.categoria,
-      anopubli: produto.anopubli,
-      autor: produto.autor,
-      isbn: produto.isbn
-
+      nome: produto.nome,
+      fornecedor_id: produto.fornecedor_id,
+      categoria: produto.categoria
     };
     
     ProdutoDataService.create(data)
       .then(response => {
         setProduto({
           id: response.data.id,
-          titulo: response.data.titulo,
-          categoria: response.data.categoria,
-          anopubli: response.data.anopubli,
-          autor: response.data.autor,
-          isbn: response.data.isbn
+          nome: response.data.nome,
+          fornecedor_id: response.data.fornecedor_id,
+          categoria: response.data.categoria
         });
         
         setSubmitted(true);
@@ -72,15 +65,15 @@ const CriarProduto = (props) => {
       ) : (
         <div>
           <div className="form-group">
-            <label htmlFor="titulo">Título</label>
+            <label htmlFor="nome">nome</label>
             <input
               type="text"
               className="form-control"
-              id="titulo"
+              id="nome"
               required
-              value={produto.titulo}
+              value={produto.nome}
               onChange={executarValorAlterado}
-              name="titulo"
+              name="nome"
             />
           </div>
 
@@ -94,45 +87,6 @@ const CriarProduto = (props) => {
               value={produto.categoria}
               onChange={executarValorAlterado}
               name="categoria"
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="anopubli">Ano de Publicação</label>
-            <input
-              type="number"
-              className="form-control"
-              id="anopubli"
-              required
-              value={produto.anopubli}
-              onChange={executarValorAlterado}
-              name="anopubli"
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="autor">Autor</label>
-            <input
-              type="text"
-              className="form-control"
-              id="autor"
-              required
-              value={produto.autor}
-              onChange={executarValorAlterado}
-              name="autor"
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="isbn">ISBN</label>
-            <input
-              type="number"
-              className="form-control"
-              id="isbn"
-              required
-              value={produto.isbn}
-              onChange={executarValorAlterado}
-              name="isbn"
             />
           </div>
 

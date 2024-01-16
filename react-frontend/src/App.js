@@ -6,20 +6,20 @@ import "@fortawesome/fontawesome-free/css/all.css"; // importa FA
 import "@fortawesome/fontawesome-free/js/all.js"; // importa FA
 
 //componentes livros
-import ListaDeLivros from "./componentes/ListaLivros";
-import Livro from "./componentes/Livro";
-import CriarLivro from "./componentes/NovoLivro";
+import ListaDeProdutos from "./componentes/ListaProdutos";
+import Produtos from "./componentes/Produtos";
+import CriarProduto from "./componentes/NovoProduto";
 
 
 //componentes bibliotecas
-import ListaDeBibliotecas from "./componentes/ListaBibliotecas";
-import Biblioteca from "./componentes/Biblioteca";
-import NovaBiblioteca from "./componentes/NovaBiblioteca";
+import ListaDeFornecedores from "./componentes/ListaFornecedores";
+import Fornecedores from "./componentes/Fornecedores";
+import NovoFornecedor from "./componentes/NovoFornecedor";
 
 
 //componentes BibliotecaGerency
 import ListaDeBibliotecaGerency from "./componentes/ListaBibliotecaGerency";
-import BibliotecaGerency from "./componentes/ListaLivrosNaBiblioteca";
+import Gerency from "./componentes/ListaProdutosDoFornecedor";
 import CriarVinculo from "./componentes/Vinculo";
 
 
@@ -28,17 +28,17 @@ function App() {
   return (
     <div>
       <nav className="navbar navbar-expand navbar-light bg-light">
-        <a href="/Bibliotecas" className="navbar-brand">
+        <a href="/Fornecedores" className="navbar-brand">
           Programação III
         </a>
         <div className="navbar-nav mr-auto">
           <li className="nav-item">
-            <Link to={"/Livros"} className="nav-link">
+            <Link to={"/Produtos"} className="nav-link">
               Livros
             </Link>
           </li>
           <li className="nav-item">
-            <Link to={"/Bibliotecas"} className="nav-link">
+            <Link to={"/Fornecedores"} className="nav-link">
               Biblioteca
             </Link>
           </li>
@@ -52,16 +52,16 @@ function App() {
 
       <div className="container mt-6">
         <Switch>
-          <Route exact path={["/", "/Livros"]} component={ListaDeLivros} />
-          <Route exact path={["/", "/Bibliotecas"]} component={ListaDeBibliotecas} />
+          <Route exact path={["/", "/Produtos"]} component={ListaDeProdutos} />
+          <Route exact path={["/", "/Fornecedores"]} component={ListaDeFornecedores} />
           <Route exact path={["/", "/BibliotecaGerency"]} component={ListaDeBibliotecaGerency} />
-          <Route exact path={["/", "/BibliotecaGerency/livrosDaBiblioteca/:id"]} component={BibliotecaGerency} />          
+          <Route exact path={["/", "/Gerency/ListaProdutosDoFornecedor/:id"]} component={Gerency} />          
 
-          <Route path="/Livros/:id" component={Livro} />
-          <Route path="/Bibliotecas/:id" component={Biblioteca} />      
+          <Route path="/Produtos/:id" component={Produtos} />
+          <Route path="/Fornecedores/:id" component={Fornecedores} />      
 
-          <Route exact path="/NovaBiblioteca" component={NovaBiblioteca} />
-          <Route exact path="/NovoLivro" component={CriarLivro} />
+          <Route exact path="/NovoFornecedor" component={NovoFornecedor} />
+          <Route exact path="/NovoProduto" component={CriarProduto} />
           <Route exact path="/Vinculo" component={CriarVinculo} />
         </Switch>
       </div>

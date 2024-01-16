@@ -1,22 +1,22 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import Pagination from "@material-ui/lab/Pagination";
-import ProdutosDataService from "../services/GerencyService";
+import FornecedoresDataService from "../services/GerencyService2";
 import { useTable } from "react-table";
 
-const ListaDeProdutos = (props) => {
+const ListaDeFornecedores = (props) => {
   /**
    * useState é um Hook do React que permite adicionar estado a componentes de função. 
    * Neste caso, useState([]) inicializa um estado chamado "users" com um valor inicial de um array vazio []. 
    * O array vazio é passado como um valor inicial para o estado.
    */
-  const [produtos, definirProdutos] = useState([]);
-  const produtosRef = useRef();
+  const [fornecedores, definirFornecedores] = useState([]);
+  const fornecedoresRef = useRef();
   const [page, setPage] = useState(1);
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(4);
   const pageSizes = [4, 8, 12];
 
-  produtosRef.current = produtos;
+  fornecedoresRef.current = fornecedores;
 
   const buscarVariaveisDePaginacao = (page, pageSize) => {
     let params = {};
@@ -32,16 +32,16 @@ const ListaDeProdutos = (props) => {
     return params;
   };
 
-  const buscarProdutos = () => {
+  const buscarFornecedores = () => {
     const params = buscarVariaveisDePaginacao(page, pageSize);
 
-    ProdutosDataService.getAll(params)
+    FornecedoresDataService.getAll2(params)
       .then((response) => {
         console.log(response)
-        const produtos = response.data.content;
+        const fornecedores = response.data.content;
         const totalPages = response.data.totalPages;
 
-        definirProdutos(produtos);
+        definirFornecedores(fornecedores);
         setCount(totalPages);
 
         console.log(response.data);
@@ -51,32 +51,37 @@ const ListaDeProdutos = (props) => {
       });
   };
 
-  useEffect(buscarProdutos, [page, pageSize]);
+  const openFornecedores = (rowIndex) => {
+    const id = fornecedoresRef.current[rowIndex].id;
 
-  const openProdutos = (rowIndex) => {
-    const id = produtosRef.current[rowIndex].id;
+    props.history.push("/Fornecedores/" + id);
+  };
 
-    props.history.push("/Produtos/" + id);
+  const openFornecedorProduto = (rowIndex) => {
+    const id = fornecedoresRef.current[rowIndex].id;
+
+    props.history.push("/Gerency/produtosDoFornecedor/" + id);
   };
 
 
-  const deleteProdutos = (rowIndex) => {
-    const id = produtosRef.current[rowIndex].id;
+  const deleteFornecedores = (rowIndex) => {
+    const id = fornecedoresRef.current[rowIndex].id;
 
-    ProdutosDataService.remove(id)
+    FornecedoresDataService.remove2(id)
       .then((response) => {
-        props.history.push("/Produtos");
+        props.history.push("/Fornecedores");
 
-        let novosProdutos = [...produtosRef.current];
-        novosProdutos.splice(rowIndex, 1);
+        let novasFornecedores= [...fornecedoresRef.current];
+        novasFornecedores.splice(rowIndex, 1);
 
-        definirProdutos(novosProdutos);
+        definirFornecedores(novasFornecedores);
       })
       .catch((e) => {
         console.log(e);
       });
   };
 
+  useEffect(buscarFornecedores, [page, pageSize]);
 
   const handlePageChange = (event, value) => {
     setPage(value);
@@ -94,39 +99,39 @@ const ListaDeProdutos = (props) => {
         accessor: "id",
       },
       {
-        Header: "Titulo",
-        accessor: "titulo",
+        Header: "nome",
+        accessor: "nome",
       },
       {
-        Header: "Categoria",
-        accessor: "categoria",
+        Header: "cidade",
+        accessor: "cidade",
       },
       {
-        Header: "Anopubli",
-        accessor: "anopubli",
+        Header: "celular",
+        accessor: "celular",
       },
       {
-        Header: "Autor",
-        accessor: "autor",
-      },
-      {
-        Header: "ISBN",
-        accessor: "isbn",
+        Header: "email",
+        accessor: "email",
       },
       {
         Header: "Ações",
         accessor: "actions",
         Cell: (props) => {
           const rowIdx = props.row.id;
+
           return (
-            
             <div>
-              <span onClick={() => openProdutos(rowIdx)}>
+              <span onClick={() => openFornecedores(rowIdx)}>
                 <button type="button" className="btn btn-warning btn-sm">Editar</button>
               </span>
               &nbsp;
-              <span onClick={() => deleteProdutos(rowIdx)}>
+              <span onClick={() => deleteFornecedores(rowIdx)}>
                 <button type="button" className="btn btn-danger btn-sm">Remover</button>
+              </span>
+              &nbsp;
+              <span onClick={() => openFornecedorProduto(rowIdx)}>
+                <button type="button" className="btn btn-success btn-sm">Ver livros</button>
               </span>
             </div>
           );
@@ -144,7 +149,7 @@ const ListaDeProdutos = (props) => {
     prepareRow,
   } = useTable({
     columns,
-    data: produtos,
+    data: fornecedores,
   });
 
   return (
@@ -215,8 +220,8 @@ const ListaDeProdutos = (props) => {
             ))}
           </select>
           <div className="mt-3">
-            <button type="button" className="btn btn-success" onClick={() => props.history.push("/NovoProduto")}>
-            Adicionar Produtos
+            <button type="button" className="btn btn-success" onClick={() => props.history.push("/NovoFornecedor")}>
+            Adicionar Fornecedores
             </button>
           </div>
 
@@ -239,4 +244,4 @@ const ListaDeProdutos = (props) => {
   );
 };
 
-export default ListaDeProdutos;
+export default ListaDeFornecedores;

@@ -1,11 +1,11 @@
 import http from "../http-common";
 
 const get4 = (id) => {
-  return http.get(`/BibliotecaGerency/${id}`);
+  return http.get(`/Gerency/${id}`);
 };
 
 const getAll4 = (params) => {
-  return http.get("/BibliotecaGerency", { params });
+  return http.get("/Gerency", { params });
 };
 
 const getPorTitulo = (titulo) => {
@@ -13,7 +13,7 @@ const getPorTitulo = (titulo) => {
 };
 
 const create4 = (data) => {
-  return http.post(`/BibliotecaGerency/addLivroNaBiblioteca`, data);
+  return http.post(`/Gerency/addLivroNaBiblioteca`, data);
 };
  
 

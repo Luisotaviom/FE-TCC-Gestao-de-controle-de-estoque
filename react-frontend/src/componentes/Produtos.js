@@ -4,11 +4,9 @@ import ProdutoDataService from "../services/GerencyService";
 const Produtos = props => {
   const initialProdutoState = {
     id: null,
-    titulo: "",
-    categoria: "",
-    anopubli: "",
-    autor: "",
-    ISBN: ""
+    nome: "",
+    fornecedor_id: "",
+    categoria: ""
   };
   const [currentProduto, setCurrentProduto] = useState(initialProdutoState);
   const [message, setMessage] = useState("");
@@ -56,13 +54,13 @@ const Produtos = props => {
           <h4>Produto</h4>
           <form>
             <div className="form-group">
-              <label htmlFor="title">titulo</label>
+              <label htmlFor="title">nome</label>
               <input
                 type="text"
                 className="form-control"
-                id="titulo"
-                name="titulo"
-                value={currentProduto.titulo}
+                id="nome"
+                name="nome"
+                value={currentProduto.nome}
                 onChange={handleInputChange}
               />
             </div>
@@ -74,28 +72,6 @@ const Produtos = props => {
                 id="categoria"
                 name="categoria"
                 value={currentProduto.categoria}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="title">anopubli</label>
-              <input
-                type="text"
-                className="form-control"
-                id="anopubli"
-                name="anopubli"
-                value={currentProduto.anopubli}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="title">autor</label>
-              <input
-                type="text"
-                className="form-control"
-                id="autor"
-                name="autor"
-                value={currentProduto.autor}
                 onChange={handleInputChange}
               />
             </div>

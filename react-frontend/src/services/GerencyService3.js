@@ -1,23 +1,23 @@
 import http from "../http-common";
 
 const get3 = (id) => {
-  return http.get(`/BibliotecaGerency/${id}`);
+  return http.get(`/Gerency/${id}`);
 };
 
 const create3 = (data) => {
-  return http.post("/BibliotecaGerency", data);
+  return http.post("/Gerency", data);
 };
 
 const update3 = (id, data) => {
-  return http.put(`/BibliotecaGerency/${id}`, data);
+  return http.put(`/Gerency/${id}`, data);
 };
 
 const remove3 = (idBiblio, idLivro) => {
-  return http.delete(`/BibliotecaGerency/${idBiblio}/Livros/${idLivro}`);
+  return http.delete(`/Gerency/${idBiblio}/Livros/${idLivro}`);
 };
 
 const getAll3 = (params) => {
-  return http.get("/BibliotecaGerency", { params });
+  return http.get("/Gerency", { params });
 };
 
 

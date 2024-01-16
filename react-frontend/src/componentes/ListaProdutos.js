@@ -1,22 +1,22 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import Pagination from "@material-ui/lab/Pagination";
-import BibliotecaDataService from "../services/GerencyService2";
+import ProdutosDataService from "../services/GerencyService";
 import { useTable } from "react-table";
 
-const ListaDeBibliotecas = (props) => {
+const ListaDeProdutos = (props) => {
   /**
    * useState é um Hook do React que permite adicionar estado a componentes de função. 
    * Neste caso, useState([]) inicializa um estado chamado "users" com um valor inicial de um array vazio []. 
    * O array vazio é passado como um valor inicial para o estado.
    */
-  const [bibliotecas, definirBiblio] = useState([]);
-  const biblioRef = useRef();
+  const [produtos, definirProdutos] = useState([]);
+  const produtosRef = useRef();
   const [page, setPage] = useState(1);
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(4);
   const pageSizes = [4, 8, 12];
 
-  biblioRef.current = bibliotecas;
+  produtosRef.current = produtos;
 
   const buscarVariaveisDePaginacao = (page, pageSize) => {
     let params = {};
@@ -32,16 +32,16 @@ const ListaDeBibliotecas = (props) => {
     return params;
   };
 
-  const buscarBiblios = () => {
+  const buscarProdutos = () => {
     const params = buscarVariaveisDePaginacao(page, pageSize);
 
-    BibliotecaDataService.getAll2(params)
+    ProdutosDataService.getAll(params)
       .then((response) => {
         console.log(response)
-        const bibliotecas = response.data.content;
+        const produtos = response.data.content;
         const totalPages = response.data.totalPages;
 
-        definirBiblio(bibliotecas);
+        definirProdutos(produtos);
         setCount(totalPages);
 
         console.log(response.data);
@@ -51,37 +51,32 @@ const ListaDeBibliotecas = (props) => {
       });
   };
 
-  const openBiblio = (rowIndex) => {
-    const id = biblioRef.current[rowIndex].id;
+  useEffect(buscarProdutos, [page, pageSize]);
 
-    props.history.push("/Bibliotecas/" + id);
-  };
+  const openProdutos = (rowIndex) => {
+    const id = produtosRef.current[rowIndex].id;
 
-  const openBiblioLivros = (rowIndex) => {
-    const id = biblioRef.current[rowIndex].id;
-
-    props.history.push("/BibliotecaGerency/livrosDaBiblioteca/" + id);
+    props.history.push("/Produtos/" + id);
   };
 
 
-  const deleteBiblio = (rowIndex) => {
-    const id = biblioRef.current[rowIndex].id;
+  const deleteProdutos = (rowIndex) => {
+    const id = produtosRef.current[rowIndex].id;
 
-    BibliotecaDataService.remove2(id)
+    ProdutosDataService.remove(id)
       .then((response) => {
-        props.history.push("/Bibliotecas");
+        props.history.push("/Produtos");
 
-        let novasBiblios= [...biblioRef.current];
-        novasBiblios.splice(rowIndex, 1);
+        let novosProdutos = [...produtosRef.current];
+        novosProdutos.splice(rowIndex, 1);
 
-        definirBiblio(novasBiblios);
+        definirProdutos(novosProdutos);
       })
       .catch((e) => {
         console.log(e);
       });
   };
 
-  useEffect(buscarBiblios, [page, pageSize]);
 
   const handlePageChange = (event, value) => {
     setPage(value);
@@ -99,27 +94,31 @@ const ListaDeBibliotecas = (props) => {
         accessor: "id",
       },
       {
-        Header: "Nome",
+        Header: "nome",
         accessor: "nome",
+      },
+      {
+        Header: "fornecedor_id",
+        accessor: "fornecedor_id",
+      },
+      {
+        Header: "Categoria",
+        accessor: "categoria",
       },
       {
         Header: "Ações",
         accessor: "actions",
         Cell: (props) => {
           const rowIdx = props.row.id;
-
           return (
+            
             <div>
-              <span onClick={() => openBiblio(rowIdx)}>
+              <span onClick={() => openProdutos(rowIdx)}>
                 <button type="button" className="btn btn-warning btn-sm">Editar</button>
               </span>
               &nbsp;
-              <span onClick={() => deleteBiblio(rowIdx)}>
+              <span onClick={() => deleteProdutos(rowIdx)}>
                 <button type="button" className="btn btn-danger btn-sm">Remover</button>
-              </span>
-              &nbsp;
-              <span onClick={() => openBiblioLivros(rowIdx)}>
-                <button type="button" className="btn btn-success btn-sm">Ver livros</button>
               </span>
             </div>
           );
@@ -137,7 +136,7 @@ const ListaDeBibliotecas = (props) => {
     prepareRow,
   } = useTable({
     columns,
-    data: bibliotecas,
+    data: produtos,
   });
 
   return (
@@ -208,8 +207,8 @@ const ListaDeBibliotecas = (props) => {
             ))}
           </select>
           <div className="mt-3">
-            <button type="button" className="btn btn-success" onClick={() => props.history.push("/NovaBiblioteca")}>
-            Adicionar biblioteca
+            <button type="button" className="btn btn-success" onClick={() => props.history.push("/NovoProduto")}>
+            Adicionar Produtos
             </button>
           </div>
 
@@ -232,4 +231,4 @@ const ListaDeBibliotecas = (props) => {
   );
 };
 
-export default ListaDeBibliotecas;
+export default ListaDeProdutos;

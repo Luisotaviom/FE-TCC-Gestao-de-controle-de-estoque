@@ -1,22 +1,22 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import Pagination from "@material-ui/lab/Pagination";
-import ListaLivrosDasBibliotecasDataService from "../services/GerencyService5";
+import ListaProdutosDoFornecedorDataService from "../services/GerencyService5";
 import { useTable } from "react-table";
 
-const ListaLivrosDasBiblio = (props) => {
+const ListaProdutosDoFornecedor = (props) => {
   /**
    * useState é um Hook do React que permite adicionar estado a componentes de função. 
    * Neste caso, useState([]) inicializa um estado chamado "users" com um valor inicial de um array vazio []. 
    * O array vazio é passado como um valor inicial para o estado.
    */
-  const [livrosDaBibliotecas, definirListaLivrosDasBiblio] = useState([]);
-  const listaLivrosDasBiblioRef = useRef();
+  const [produtosDoFornecedor, definirListaProdutosDoFornecedor] = useState([]);
+  const produtosDoFornecedorRef = useRef();
   const [page, setPage] = useState(1);
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(4);
   const pageSizes = [4, 8, 12];
 
-  listaLivrosDasBiblioRef.current = livrosDaBibliotecas;
+  produtosDoFornecedorRef.current = produtosDoFornecedor;
 
   const buscarVariaveisDePaginacao = (page, pageSize) => {
     let params = {};
@@ -32,17 +32,17 @@ const ListaLivrosDasBiblio = (props) => {
     return params;
   };
 
-  const buscarLivrosDaBiblios = () => {
+  const buscarProdutosDoFornecedor = () => {
     const params = buscarVariaveisDePaginacao(page, pageSize);
     const { id } = props.match.params;    
 
-    ListaLivrosDasBibliotecasDataService.getAll5(id, params)
+    ListaProdutosDoFornecedorDataService.getAll5(id, params)
       .then((response) => {
         console.log(response)
-        const livrosDaBiblio = response.data.content;
+        const produtosDoFornecedor = response.data.content;
         const totalPages = response.data.totalPages;
 
-        definirListaLivrosDasBiblio(livrosDaBiblio);
+        definirListaProdutosDoFornecedor(produtosDoFornecedor);
         setCount(totalPages);
 
         console.log(response.data);
@@ -52,7 +52,7 @@ const ListaLivrosDasBiblio = (props) => {
       });
   };
 
-  useEffect(buscarLivrosDaBiblios, [page, pageSize]);
+  useEffect(buscarProdutosDoFornecedor, [page, pageSize]);
 
   const handlePageChange = (event, value) => {
     setPage(value);
@@ -89,7 +89,7 @@ const ListaLivrosDasBiblio = (props) => {
     prepareRow,
   } = useTable({
     columns,
-    data: livrosDaBibliotecas,
+    data: produtosDoFornecedor,
   });
 
   return (
@@ -179,4 +179,4 @@ const ListaLivrosDasBiblio = (props) => {
   );
 };
 
-export default ListaLivrosDasBiblio;
+export default ListaProdutosDoFornecedor;
