@@ -206,11 +206,6 @@ const ListaDeProdutos = (props) => {
               </option>
             ))}
           </select>
-          <div className="mt-3">
-            <button type="button" className="btn btn-success" onClick={() => props.history.push("/NovoProduto")}>
-            Adicionar Produtos
-            </button>
-          </div>
 
           <Pagination
             color="primary"

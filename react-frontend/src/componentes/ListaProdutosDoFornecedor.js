@@ -34,9 +34,9 @@ const ListaProdutosDoFornecedor = (props) => {
 
   const buscarProdutosDoFornecedor = () => {
     const params = buscarVariaveisDePaginacao(page, pageSize);
-    const { id } = props.match.params;    
+    const { fornecedor_id } = props.match.params;    
 
-    ListaProdutosDoFornecedorDataService.getAll5(id, params)
+    ListaProdutosDoFornecedorDataService.getAll5(fornecedor_id, params)
       .then((response) => {
         console.log(response)
         const produtosDoFornecedor = response.data.content;
@@ -66,16 +66,16 @@ const ListaProdutosDoFornecedor = (props) => {
   const columns = useMemo(
     () => [
       {
-        Header: "nome Biblioteca",
-        accessor: "nomeBiblioteca",
+        Header: "id",
+        accessor: "id",
       },
       {
-        Header: "titulo Livro",
-        accessor: "tituloLivro",
+        Header: "nome",
+        accessor: "nome",
       },
       {
-        Header: "codigo isbn",
-        accessor: "codigoisbn",
+        Header: "categoria",
+        accessor: "categoria",
       },
     ],
     []
@@ -104,6 +104,7 @@ const ListaProdutosDoFornecedor = (props) => {
               </option>
             ))}
           </select>
+          
 
           <Pagination
             color="primary"
@@ -159,6 +160,11 @@ const ListaProdutosDoFornecedor = (props) => {
               </option>
             ))}
           </select>
+          <div className="mt-3">
+            <button type="button" className="btn btn-success" onClick={() => props.history.push("/NovoProduto")}>
+            Adicionar novo produto
+            </button>
+          </div>
 
           <Pagination
             color="primary"

@@ -1,7 +1,7 @@
 import http from "../http-common";
 
-const getAll5 = (id, params) => {
-  return http.get(`/Gerency/produtosDoFornecedor/${id}`, { params });
+const getAll5 = (fornecedor_id, params) => {
+  return http.get(`/Produtos/fornecedor/${fornecedor_id}`, { params });
 };
 
 const getLivroTitulo = (titulo) => {

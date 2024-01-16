@@ -60,8 +60,14 @@ const ListaDeFornecedores = (props) => {
   const openFornecedorProduto = (rowIndex) => {
     const id = fornecedoresRef.current[rowIndex].id;
 
-    props.history.push("/Gerency/produtosDoFornecedor/" + id);
+    props.history.push("/Produtos/fornecedor/" + id  );
   };
+
+  const openNovoProduto = (rowIndex) => {
+    const id = fornecedoresRef.current[rowIndex].id;
+    props.history.push("/Produtos/fornecedor/" + id + "/produto");
+  };
+  
 
 
   const deleteFornecedores = (rowIndex) => {
@@ -132,6 +138,10 @@ const ListaDeFornecedores = (props) => {
               &nbsp;
               <span onClick={() => openFornecedorProduto(rowIdx)}>
                 <button type="button" className="btn btn-success btn-sm">Ver livros</button>
+              </span>
+              &nbsp;
+              <span onClick={() => openNovoProduto(rowIdx)}>
+                <button type="button" className="btn btn-success btn-sm">add</button>
               </span>
             </div>
           );

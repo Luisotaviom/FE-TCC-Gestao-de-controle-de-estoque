@@ -19,8 +19,7 @@ import NovoFornecedor from "./componentes/NovoFornecedor";
 
 //componentes BibliotecaGerency
 import ListaDeBibliotecaGerency from "./componentes/ListaBibliotecaGerency";
-import Gerency from "./componentes/ListaProdutosDoFornecedor";
-import CriarVinculo from "./componentes/Vinculo";
+import ListaProdutosDoFornecedor from "./componentes/ListaProdutosDoFornecedor";
 
 
 
@@ -29,22 +28,22 @@ function App() {
     <div>
       <nav className="navbar navbar-expand navbar-light bg-light">
         <a href="/Fornecedores" className="navbar-brand">
-          Programação III
+          Estoque
         </a>
         <div className="navbar-nav mr-auto">
           <li className="nav-item">
             <Link to={"/Produtos"} className="nav-link">
-              Livros
+            Produtos
             </Link>
           </li>
           <li className="nav-item">
             <Link to={"/Fornecedores"} className="nav-link">
-              Biblioteca
+            Fornecedores
             </Link>
           </li>
           <li className="nav-item">
             <Link to={"/BibliotecaGerency"} className="nav-link">
-              Biblioteca Gerencia
+              Gerencia
             </Link>
           </li>
         </div>
@@ -55,14 +54,13 @@ function App() {
           <Route exact path={["/", "/Produtos"]} component={ListaDeProdutos} />
           <Route exact path={["/", "/Fornecedores"]} component={ListaDeFornecedores} />
           <Route exact path={["/", "/BibliotecaGerency"]} component={ListaDeBibliotecaGerency} />
-          <Route exact path={["/", "/Gerency/ListaProdutosDoFornecedor/:id"]} component={Gerency} />          
+          <Route exact path={["/", "/Produtos/fornecedor/:fornecedor_id"]} component={ListaProdutosDoFornecedor} />          
+
+          <Route exact path="/NovoFornecedor" component={NovoFornecedor} />
+          <Route path="/Produtos/fornecedor/:id/produto" component={CriarProduto} />
 
           <Route path="/Produtos/:id" component={Produtos} />
           <Route path="/Fornecedores/:id" component={Fornecedores} />      
-
-          <Route exact path="/NovoFornecedor" component={NovoFornecedor} />
-          <Route exact path="/NovoProduto" component={CriarProduto} />
-          <Route exact path="/Vinculo" component={CriarVinculo} />
         </Switch>
       </div>
     </div>

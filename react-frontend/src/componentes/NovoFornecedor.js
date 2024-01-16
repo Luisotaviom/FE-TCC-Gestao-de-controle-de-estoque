@@ -48,7 +48,7 @@ const NovoFornecedor = (props) => {
   };
 
   const voltarParaLista = () => {
-    props.history.push("/Fornecedor");
+    props.history.push("/Fornecedores");
   };
 
   return (

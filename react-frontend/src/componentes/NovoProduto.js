@@ -2,6 +2,12 @@ import React, { useState } from "react";
 import ProdutoDataService from "../services/GerencyService";
 
 const CriarProduto = (props) => {
+  const fornecedorId = props.match.params.id;
+  if (!fornecedorId) {
+      console.error("Fornecedor ID is undefined");
+      // Lidar com o caso de ID indefinido, talvez redirecionando de volta ou mostrando uma mensagem
+  }
+
   const initialUserState = {
     id: null,
     nome: "",
@@ -20,11 +26,10 @@ const CriarProduto = (props) => {
   const salvar = () => {
     var data = {
       nome: produto.nome,
-      fornecedor_id: produto.fornecedor_id,
       categoria: produto.categoria
     };
     
-    ProdutoDataService.create(data)
+    ProdutoDataService.create(fornecedorId, data)
       .then(response => {
         setProduto({
           id: response.data.id,
@@ -46,7 +51,7 @@ const CriarProduto = (props) => {
   };
 
   const voltarParaLista = () => {
-    props.history.push("/Produtos");
+    props.history.push("/Fornecedores");
   };
 
   return (
@@ -78,7 +83,7 @@ const CriarProduto = (props) => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="categoria">Categoria</label>
+            <label htmlFor="categoria">categoria</label>
             <input
               type="text"
               className="form-control"

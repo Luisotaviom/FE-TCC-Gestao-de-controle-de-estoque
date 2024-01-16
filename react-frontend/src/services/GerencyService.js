@@ -5,7 +5,7 @@ const get = (id) => {
 };
 
 const create = (id, data) => {
-  return http.post(`/Produtos/fornecedor/${id}`/`produto`, data);
+  return http.post(`/Produtos/fornecedor/${id}/produto`, data);
 };
 
 const update = (id, data) => {

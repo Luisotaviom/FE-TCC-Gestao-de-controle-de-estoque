@@ -12,16 +12,11 @@ const getPorTitulo = (titulo) => {
   return http.get(`/livroPorTitulo?` + titulo);
 };
 
-const create4 = (data) => {
-  return http.post(`/Gerency/addLivroNaBiblioteca`, data);
-};
- 
 
 const GerencyServer4 = {
   getAll4,
   get4,
   getPorTitulo,
-  create4
 };
 
 

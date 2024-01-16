@@ -87,12 +87,12 @@ const ListaDeBibliotecaGerency= (props) => {
   const columns = useMemo(
     () => [
       {
-        Header: "Titulo do livro",
-        accessor: "titulo",
+        Header: "nomeProduto",
+        accessor: "nomeProduto",
       },
       {
-        Header: "Nome Biblioteca ",
-        accessor: "nomeBiblioteca",
+        Header: "nomeFornecedor",
+        accessor: "nomeFornecedor",
       },
       {
         Header: "Ações",
