@@ -1,24 +1,25 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import Pagination from "@material-ui/lab/Pagination";
-import BibliotecaGerencyDataService from "../services/GerencyService3";
+import MovimentacoesDataService from "../services/GerencyServiceMov";
 import { useTable } from "react-table";
 
-const ListaDeBibliotecaGerency= (props) => {
+const ListaDeMovimentacoes = (props) => {
   /**
    * useState é um Hook do React que permite adicionar estado a componentes de função. 
    * Neste caso, useState([]) inicializa um estado chamado "users" com um valor inicial de um array vazio []. 
    * O array vazio é passado como um valor inicial para o estado.
    */
-  const [bibliotecaGerency, definirBibliotecaGerency] = useState([]);
-  const bibliotecaGerencyRef = useRef();
+  const [movimentacoes, definirMovimentacoes] = useState([]);
+  const [tipoMovimentacao, setTipoMovimentacao] = useState("");
+  const movimentacoesRef = useRef();
   const [page, setPage] = useState(1);
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(4);
   const pageSizes = [4, 8, 12];
 
-  bibliotecaGerencyRef.current = bibliotecaGerency;
+  movimentacoesRef.current = movimentacoes;
 
-  const buscarVariaveisDePaginacao = (page, pageSize) => {
+  const buscarVariaveisDePaginacao = (page, pageSize, tipo) => {
     let params = {};
 
     if (page) {
@@ -29,50 +30,65 @@ const ListaDeBibliotecaGerency= (props) => {
       params["size"] = pageSize;
     }
 
+    if (tipo) {
+      params["tipo"] = tipo;
+    }
+
     return params;
   };
 
-  const buscarBibliotecaGerency = () => {
+  const buscarMovimentacoes = () => {
     const params = buscarVariaveisDePaginacao(page, pageSize);
 
-    BibliotecaGerencyDataService.getAll3(params)
+    if (tipoMovimentacao) {
+        // Se um tipo específico foi selecionado, use getTipos
+        MovimentacoesDataService.getTipos({ ...params, tipo: tipoMovimentacao })
+            .then(handleResponse)
+            .catch(handleError);
+    } else {
+        // Se nenhum tipo foi selecionado, busque todas as movimentações
+        MovimentacoesDataService.getAll(params)
+            .then(handleResponse)
+            .catch(handleError);
+    }
+  };
+
+  const openMovimentacoes = (rowIndex) => {
+    const id = movimentacoesRef.current[rowIndex].id;
+
+    props.history.push("/Movimentacoes/" + id);
+  };
+
+  const deleteMovimentacoes = (rowIndex) => {
+    const id = movimentacoesRef.current[rowIndex].id;
+
+    MovimentacoesDataService.remove(id)
       .then((response) => {
-        console.log(response)
-        const bibliotecaGerency = response.data.content;
-        const totalPages = response.data.totalPages;
+        props.history.push("/Movimentacoes");
 
-        definirBibliotecaGerency(bibliotecaGerency);
-        setCount(totalPages);
+        let novasMovimentacoes= [...movimentacoesRef.current];
+        novasMovimentacoes.splice(rowIndex, 1);
 
-        console.log(response.data);
+        definirMovimentacoes(novasMovimentacoes);
       })
       .catch((e) => {
         console.log(e);
       });
   };
 
-  useEffect(buscarBibliotecaGerency, [page, pageSize]);
+    const handleResponse = (response) => {
+      const movimentacoes = response.data.content;
+      const totalPages = response.data.totalPages;
 
+      definirMovimentacoes(movimentacoes);
+      setCount(totalPages);
+  };
 
-    const deleteBibliotecaGerency = (idBiblio, idLivro, rowIndex) => {
-    if (!idBiblio || !idLivro) {
-      console.error("IDs inválidos:", { idBiblio, idLivro });
-      return;
-    }
+  const handleError = (error) => {
+      console.log(error);
+  };
 
-    BibliotecaGerencyDataService.remove3(idLivro, idBiblio)
-      .then((response) => {
-        props.history.push("/BibliotecaGerency");
-
-        let novosVinculos = [...bibliotecaGerencyRef.current];
-        novosVinculos.splice(rowIndex, 1);
-
-        definirBibliotecaGerency(novosVinculos);
-      })
-      .catch((e) => {
-        console.error(e);
-      });
-    };
+  useEffect(buscarMovimentacoes, [page, pageSize, tipoMovimentacao]);
 
   const handlePageChange = (event, value) => {
     setPage(value);
@@ -82,28 +98,62 @@ const ListaDeBibliotecaGerency= (props) => {
     setPageSize(event.target.value);
     setPage(1);
   };
-  
+
+  const handleTipoMovimentacaoChange = (event) => {
+    const valor = event.target.value;
+
+    // Transformar para maiúsculo e verificar se é "E" ou "S"
+    const tipoValido = (valor === "E" || valor === "S") ? valor.toUpperCase() : "";
+
+    setTipoMovimentacao(tipoValido);
+  };
 
   const columns = useMemo(
     () => [
       {
-        Header: "nomeProduto",
-        accessor: "nomeProduto",
+        Header: "Id",
+        accessor: "id",
       },
       {
-        Header: "nomeFornecedor",
-        accessor: "nomeFornecedor",
+        Header: "produtoId",
+        accessor: "produto_id",
+      },
+      {
+        Header: "quantidade",
+        accessor: "quantidade",
+      },
+      {
+        Header: "valor",
+        accessor: "valor",
+      },
+      {
+        Header: "tipo",
+        accessor: "tipo",
+      },
+      {
+        Header: "dataRegistro",
+        accessor: "dataRegistro",
+      },
+      {
+        Header: "fornecedorId",
+        accessor: "fornecedor_id",
       },
       {
         Header: "Ações",
         accessor: "actions",
         Cell: (props) => {
           const rowIdx = props.row.id;
+
           return (
             <div>
-              <span onClick={() => deleteBibliotecaGerency(rowIdx)}>
-                <button type="button" className="btn btn-danger btn-sm">Remover</button>
+              <span onClick={() => openMovimentacoes(rowIdx)}>
+                <button type="button" className="btn btn-warning btn-sm">Editar produto</button>
               </span>
+              &nbsp;
+              <span onClick={() => deleteMovimentacoes(rowIdx)}>
+                <button type="button" className="btn btn-danger btn-sm">Remover produto</button>
+              </span>
+              &nbsp;
             </div>
           );
         },
@@ -120,7 +170,7 @@ const ListaDeBibliotecaGerency= (props) => {
     prepareRow,
   } = useTable({
     columns,
-    data: bibliotecaGerency,
+    data: movimentacoes,
   });
 
   return (
@@ -146,6 +196,15 @@ const ListaDeBibliotecaGerency= (props) => {
             variant="outlined"
             onChange={handlePageChange}
           />
+        </div>
+
+        <div>
+          {"Tipo de Movimentação: "}
+          <select onChange={handleTipoMovimentacaoChange} value={tipoMovimentacao}>
+            <option value="">Todos</option>
+            <option value="E">Entrada</option>
+            <option value="S">Saída</option>
+          </select>
         </div>
 
         <table
@@ -190,13 +249,11 @@ const ListaDeBibliotecaGerency= (props) => {
               </option>
             ))}
           </select>
-
-
           <div className="mt-3">
-            <button type="button" className="btn btn-success" onClick={() => props.history.push("/Vinculo")}>
-            Vincular livro e biblioteca
+            <button type="button" className="btn btn-success" onClick={() => props.history.push("/NovaMovimentacao")}>
+            Adicionar Movimentacoes
             </button>
-          </div>  
+          </div>
 
           <Pagination
             color="primary"
@@ -209,6 +266,7 @@ const ListaDeBibliotecaGerency= (props) => {
             onChange={handlePageChange}
           />
         </div>
+        
 
 
       </div>
@@ -216,4 +274,4 @@ const ListaDeBibliotecaGerency= (props) => {
   );
 };
 
-export default ListaDeBibliotecaGerency;
+export default ListaDeMovimentacoes;

@@ -5,21 +5,25 @@ import "./App.css"; // importa estilo do projeto
 import "@fortawesome/fontawesome-free/css/all.css"; // importa FA
 import "@fortawesome/fontawesome-free/js/all.js"; // importa FA
 
-//componentes livros
+//componentes Produtos
 import ListaDeProdutos from "./componentes/ListaProdutos";
 import Produtos from "./componentes/Produtos";
 import CriarProduto from "./componentes/NovoProduto";
 
 
-//componentes bibliotecas
+//componentes Fornecedores
 import ListaDeFornecedores from "./componentes/ListaFornecedores";
 import Fornecedores from "./componentes/Fornecedores";
 import NovoFornecedor from "./componentes/NovoFornecedor";
-
-
-//componentes BibliotecaGerency
-import ListaDeBibliotecaGerency from "./componentes/ListaBibliotecaGerency";
 import ListaProdutosDoFornecedor from "./componentes/ListaProdutosDoFornecedor";
+
+
+//componentes Movimentações
+import ListaDeMovimentacoes from "./componentes/ListaMovimentacoes";
+import NovaMovimentacao from "./componentes/NovaMovimentacao";
+import Movimentacoes from "./componentes/Movimentacoes";
+
+
 
 
 
@@ -32,18 +36,18 @@ function App() {
         </a>
         <div className="navbar-nav mr-auto">
           <li className="nav-item">
-            <Link to={"/Produtos"} className="nav-link">
+            <Link to={"/ListaDeProdutos"} className="nav-link">
             Produtos
             </Link>
           </li>
           <li className="nav-item">
-            <Link to={"/Fornecedores"} className="nav-link">
+            <Link to={"/ListaDeFornecedores"} className="nav-link">
             Fornecedores
             </Link>
           </li>
           <li className="nav-item">
-            <Link to={"/BibliotecaGerency"} className="nav-link">
-              Gerencia
+            <Link to={"/ListaDeMovimentacoes"} className="nav-link">
+              Movimentacoes
             </Link>
           </li>
         </div>
@@ -51,20 +55,22 @@ function App() {
 
       <div className="container mt-6">
         <Switch>
-          <Route exact path={["/", "/Produtos"]} component={ListaDeProdutos} />
-          <Route exact path={["/", "/Fornecedores"]} component={ListaDeFornecedores} />
-          <Route exact path={["/", "/BibliotecaGerency"]} component={ListaDeBibliotecaGerency} />
+          <Route exact path={["/", "/ListaDeProdutos"]} component={ListaDeProdutos} />
+          <Route exact path={["/", "/ListaDeFornecedores"]} component={ListaDeFornecedores} />
+          <Route exact path={["/", "/ListaDeMovimentacoes"]} component={ListaDeMovimentacoes} />
           <Route exact path={["/", "/Produtos/fornecedor/:fornecedor_id"]} component={ListaProdutosDoFornecedor} />          
 
           <Route exact path="/NovoFornecedor" component={NovoFornecedor} />
           <Route path="/Produtos/fornecedor/:id/produto" component={CriarProduto} />
+          <Route exact path="/NovaMovimentacao" component={NovaMovimentacao} />
 
           <Route path="/Produtos/:id" component={Produtos} />
           <Route path="/Fornecedores/:id" component={Fornecedores} />      
+          <Route path="/Movimentacoes/:id" component={Movimentacoes} />      
         </Switch>
       </div>
     </div>
-    
+     
   );
 }
 

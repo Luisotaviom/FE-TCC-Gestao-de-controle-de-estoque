@@ -129,19 +129,19 @@ const ListaDeFornecedores = (props) => {
           return (
             <div>
               <span onClick={() => openFornecedores(rowIdx)}>
-                <button type="button" className="btn btn-warning btn-sm">Editar</button>
+                <button type="button" className="btn btn-warning btn-sm">Editar produto</button>
               </span>
               &nbsp;
               <span onClick={() => deleteFornecedores(rowIdx)}>
-                <button type="button" className="btn btn-danger btn-sm">Remover</button>
+                <button type="button" className="btn btn-danger btn-sm">Remover produto</button>
               </span>
               &nbsp;
               <span onClick={() => openFornecedorProduto(rowIdx)}>
-                <button type="button" className="btn btn-success btn-sm">Ver livros</button>
+                <button type="button" className="btn btn-success btn-sm">Ver produtos</button>
               </span>
               &nbsp;
               <span onClick={() => openNovoProduto(rowIdx)}>
-                <button type="button" className="btn btn-success btn-sm">add</button>
+                <button type="button" className="btn btn-success btn-sm">Adicionar produto</button>
               </span>
             </div>
           );
