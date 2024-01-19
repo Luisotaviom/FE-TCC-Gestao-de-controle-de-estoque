@@ -10,6 +10,7 @@ const ListaDeProdutos = (props) => {
    * O array vazio é passado como um valor inicial para o estado.
    */
   const [produtos, definirProdutos] = useState([]);
+  const [statusAtivo, setStatusAtivo] = useState("");
   const produtosRef = useRef();
   const [page, setPage] = useState(1);
   const [count, setCount] = useState(0);
@@ -18,7 +19,7 @@ const ListaDeProdutos = (props) => {
 
   produtosRef.current = produtos;
 
-  const buscarVariaveisDePaginacao = (page, pageSize) => {
+  const buscarVariaveisDePaginacao = (page, pageSize, ativo) => {
     let params = {};
 
     if (page) {
@@ -28,53 +29,48 @@ const ListaDeProdutos = (props) => {
     if (pageSize) {
       params["size"] = pageSize;
     }
+    
+    if (ativo) {
+      params["ativo"] = ativo;
+    }
 
     return params;
   };
 
   const buscarProdutos = () => {
-    const params = buscarVariaveisDePaginacao(page, pageSize);
-
-    ProdutosDataService.getAll(params)
-      .then((response) => {
-        console.log(response)
-        const produtos = response.data.content;
-        const totalPages = response.data.totalPages;
-
-        definirProdutos(produtos);
-        setCount(totalPages);
-
-        console.log(response.data);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+    const params = buscarVariaveisDePaginacao(page, pageSize, statusAtivo);
+  
+    if (statusAtivo !== "") {
+      // Se um status específico foi selecionado, use getFornecedoresPorStatus
+      ProdutosDataService.getStatus({ ...params, ativo: statusAtivo })
+        .then(handleResponse)
+        .catch(handleError);
+    } else {
+      // Se nenhum status foi selecionado, busque todos os fornecedores
+      ProdutosDataService.getAll(params)
+        .then(handleResponse)
+        .catch(handleError);
+    }
   };
 
-  useEffect(buscarProdutos, [page, pageSize]);
+  const handleResponse = (response) => {
+    const movimentacoes = response.data.content;
+    const totalPages = response.data.totalPages;
+
+    definirProdutos(movimentacoes);
+    setCount(totalPages);
+  };
+
+  const handleError = (error) => {
+    console.error(error); // Exemplo de saída do erro
+  };
+
+  useEffect(buscarProdutos, [page, pageSize, statusAtivo]);
 
   const openProdutos = (rowIndex) => {
     const id = produtosRef.current[rowIndex].id;
 
     props.history.push("/Produtos/" + id);
-  };
-
-
-  const deleteProdutos = (rowIndex) => {
-    const id = produtosRef.current[rowIndex].id;
-
-    ProdutosDataService.remove(id)
-      .then((response) => {
-        props.history.push("/Produtos");
-
-        let novosProdutos = [...produtosRef.current];
-        novosProdutos.splice(rowIndex, 1);
-
-        definirProdutos(novosProdutos);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
   };
 
 
@@ -85,6 +81,13 @@ const ListaDeProdutos = (props) => {
   const handlePageSizeChange = (event) => {
     setPageSize(event.target.value);
     setPage(1);
+  };
+
+  const handleStatusChange = (event) => {
+    const valor = event.target.value;
+  
+    // Comparar diretamente com as strings "true" e "false"
+    setStatusAtivo(valor);
   };
 
   const columns = useMemo(
@@ -106,6 +109,15 @@ const ListaDeProdutos = (props) => {
         accessor: "categoria",
       },
       {
+        Header: "Status",
+        accessor: "ativo",
+        Cell: ({ row }) => (
+          <div style={{ textAlign: "center" }} className={row.original.ativo ? "ativo" : "inativo"}>
+            {row.original.ativo ? "Ativo" : "Desativado"}
+          </div>
+        )
+      },
+      {
         Header: "Ações",
         accessor: "actions",
         Cell: (props) => {
@@ -115,10 +127,6 @@ const ListaDeProdutos = (props) => {
             <div>
               <span onClick={() => openProdutos(rowIdx)}>
                 <button type="button" className="btn btn-warning btn-sm">Editar</button>
-              </span>
-              &nbsp;
-              <span onClick={() => deleteProdutos(rowIdx)}>
-                <button type="button" className="btn btn-danger btn-sm">Remover</button>
               </span>
             </div>
           );
@@ -163,6 +171,16 @@ const ListaDeProdutos = (props) => {
             onChange={handlePageChange}
           />
         </div>
+
+        <div>
+          {"Status Ativo: "}
+          <select onChange={handleStatusChange} value={statusAtivo}>
+            <option value="">Todos</option>
+            <option value = {true} >Ativo</option>
+            <option value = {false} >Desativado</option>
+          </select>
+        </div>
+
 
         <table
           className="table table-striped table-bordered"

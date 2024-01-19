@@ -12,7 +12,8 @@ const CriarProduto = (props) => {
     id: null,
     nome: "",
     fornecedor_id: "",
-    categoria: ""
+    categoria: "",
+    ativo: true
     };
 
   const [produto, setProduto] = useState(initialUserState);
@@ -26,7 +27,8 @@ const CriarProduto = (props) => {
   const salvar = () => {
     var data = {
       nome: produto.nome,
-      categoria: produto.categoria
+      categoria: produto.categoria,
+      ativo: produto.ativo 
     };
     
     ProdutoDataService.create(fornecedorId, data)
@@ -35,7 +37,8 @@ const CriarProduto = (props) => {
           id: response.data.id,
           nome: response.data.nome,
           fornecedor_id: response.data.fornecedor_id,
-          categoria: response.data.categoria
+          categoria: response.data.categoria,
+          ativo: response.data.ativo
         });
         
         setSubmitted(true);
@@ -94,7 +97,16 @@ const CriarProduto = (props) => {
               name="categoria"
             />
           </div>
-
+          <div className="form-group">
+            <label htmlFor="ativo">Ativo</label>
+            <input
+              type="checkbox"
+              className="form-control"
+              id="ativo"
+              checked={produto.ativo}
+              onChange={() => setProduto({ ...produto, ativo: !produto.ativo })}
+            />
+          </div>
           <button onClick={salvar} className="btn btn-success">
             Criar
           </button>

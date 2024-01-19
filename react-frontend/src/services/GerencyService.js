@@ -20,13 +20,18 @@ const getAll = (params) => {
   return http.get("/Produtos", { params });
 };
 
+const getStatus = (params) => {
+  return http.get("/Produtos/buscarPorStatus", { params });
+};
+
 
 const GerencyServer = {
   getAll,
   get,
   create,
   update,
-  remove
+  remove,
+  getStatus
 };
 
 

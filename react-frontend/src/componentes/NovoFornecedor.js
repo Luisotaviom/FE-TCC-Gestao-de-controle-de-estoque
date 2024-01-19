@@ -7,7 +7,8 @@ const NovoFornecedor = (props) => {
     nome: "",
     cidade: "",
     celular: "",
-    email: ""
+    email: "",
+    ativo: true // Adicionado o estado 'ativo' com valor padrão como true
   };
   const [Fornecedor, setFornecedor] = useState(initialFornecedortate);
   const [submitted, setSubmitted] = useState(false);
@@ -22,7 +23,8 @@ const NovoFornecedor = (props) => {
       nome: Fornecedor.nome,
       cidade: Fornecedor.cidade,
       celular: Fornecedor.celular,
-      email: Fornecedor.email
+      email: Fornecedor.email,
+      ativo: Fornecedor.ativo 
     };
 
     FornecedorDataService.create2(data)
@@ -32,7 +34,8 @@ const NovoFornecedor = (props) => {
           nome: response.data.nome,
           cidade: response.data.cidade,
           celular: response.data.celular,
-          email: response.data.email
+          email: response.data.email,
+          ativo: response.data.ativo
         });
         setSubmitted(true);
         console.log(response.data);
@@ -112,6 +115,16 @@ const NovoFornecedor = (props) => {
               value={Fornecedor.email}
               onChange={handleInputChange}
               name="email"
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="ativo">Ativo</label>
+            <input
+              type="checkbox"
+              className="form-control"
+              id="ativo"
+              checked={Fornecedor.ativo}
+              onChange={() => setFornecedor({ ...Fornecedor, ativo: !Fornecedor.ativo })}
             />
           </div>
           <button onClick={saveFornecedor} className="btn btn-success">

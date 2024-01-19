@@ -10,6 +10,7 @@ const ListaDeFornecedores = (props) => {
    * O array vazio é passado como um valor inicial para o estado.
    */
   const [fornecedores, definirFornecedores] = useState([]);
+  const [statusAtivo, setStatusAtivo] = useState("");
   const fornecedoresRef = useRef();
   const [page, setPage] = useState(1);
   const [count, setCount] = useState(0);
@@ -18,7 +19,7 @@ const ListaDeFornecedores = (props) => {
 
   fornecedoresRef.current = fornecedores;
 
-  const buscarVariaveisDePaginacao = (page, pageSize) => {
+  const buscarVariaveisDePaginacao = (page, pageSize, ativo) => {
     let params = {};
 
     if (page) {
@@ -28,28 +29,42 @@ const ListaDeFornecedores = (props) => {
     if (pageSize) {
       params["size"] = pageSize;
     }
+    
+    if (ativo) {
+      params["ativo"] = ativo;
+    }
 
     return params;
   };
 
   const buscarFornecedores = () => {
-    const params = buscarVariaveisDePaginacao(page, pageSize);
-
-    FornecedoresDataService.getAll2(params)
-      .then((response) => {
-        console.log(response)
-        const fornecedores = response.data.content;
-        const totalPages = response.data.totalPages;
-
-        definirFornecedores(fornecedores);
-        setCount(totalPages);
-
-        console.log(response.data);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+    const params = buscarVariaveisDePaginacao(page, pageSize, statusAtivo);
+  
+    if (statusAtivo !== "") {
+      // Se um status específico foi selecionado, use getFornecedoresPorStatus
+      FornecedoresDataService.getStatus({ ...params, ativo: statusAtivo })
+        .then(handleResponse)
+        .catch(handleError);
+    } else {
+      // Se nenhum status foi selecionado, busque todos os fornecedores
+      FornecedoresDataService.getAll2(params)
+        .then(handleResponse)
+        .catch(handleError);
+    }
   };
+
+  const handleResponse = (response) => {
+    const movimentacoes = response.data.content;
+    const totalPages = response.data.totalPages;
+
+    definirFornecedores(movimentacoes);
+    setCount(totalPages);
+  };
+
+  const handleError = (error) => {
+    console.error(error); // Exemplo de saída do erro
+  };
+  
 
   const openFornecedores = (rowIndex) => {
     const id = fornecedoresRef.current[rowIndex].id;
@@ -87,7 +102,7 @@ const ListaDeFornecedores = (props) => {
       });
   };
 
-  useEffect(buscarFornecedores, [page, pageSize]);
+  useEffect(buscarFornecedores, [page, pageSize, statusAtivo]);
 
   const handlePageChange = (event, value) => {
     setPage(value);
@@ -96,6 +111,13 @@ const ListaDeFornecedores = (props) => {
   const handlePageSizeChange = (event) => {
     setPageSize(event.target.value);
     setPage(1);
+  };
+
+  const handleStatusChange = (event) => {
+    const valor = event.target.value;
+  
+    // Comparar diretamente com as strings "true" e "false"
+    setStatusAtivo(valor);
   };
 
   const columns = useMemo(
@@ -119,6 +141,15 @@ const ListaDeFornecedores = (props) => {
       {
         Header: "email",
         accessor: "email",
+      },
+      {
+        Header: "Ativo",
+        accessor: "ativo",
+        Cell: ({ row }) => (
+          <div style={{ textAlign: "center" }} className={row.original.ativo ? "ativo" : "inativo"}>
+            {row.original.ativo ? "Ativo" : "Desativado"}
+          </div>
+        )
       },
       {
         Header: "Ações",
@@ -185,6 +216,15 @@ const ListaDeFornecedores = (props) => {
             variant="outlined"
             onChange={handlePageChange}
           />
+        </div>
+
+        <div>
+          {"Status Ativo: "}
+          <select onChange={handleStatusChange} value={statusAtivo}>
+            <option value="">Todos</option>
+            <option value = {true} >Ativo</option>
+            <option value = {false} >Desativado</option>
+          </select>
         </div>
 
         <table

@@ -7,7 +7,8 @@ const Fornecedores = props => {
     nome: "",
     cidade: "",
     celular: "",
-    email: ""
+    email: "",
+    ativo: true
   };
   const [currentFornecedores, setCurrentFornecedores] = useState(initialFornecedoresState);
   const [message, setMessage] = useState("");
@@ -29,7 +30,11 @@ const Fornecedores = props => {
 
   const handleInputChange = event => {
     const { name, value } = event.target;
-    setCurrentFornecedores({ ...currentFornecedores, [name]: value });
+    if (name === "ativo") {
+      setCurrentFornecedores({ ...currentFornecedores, [name]: event.target.checked });
+    } else {
+      setCurrentFornecedores({ ...currentFornecedores, [name]: value });
+    }
   };
 
   const updateFornecedores = () => {
@@ -46,6 +51,8 @@ const Fornecedores = props => {
   const voltarParaLista = () => {
     props.history.push("/Fornecedores");
   };
+
+  
 
 
 
@@ -99,6 +106,17 @@ const Fornecedores = props => {
                 onChange={handleInputChange}
               />
             </div>
+            <div className="form-group">
+            <label htmlFor="ativo">Ativo</label>
+            <input
+              type="checkbox"
+              className="form-control"
+              id="ativo"
+              name="ativo"
+              checked={currentFornecedores.ativo}
+              onChange={handleInputChange}
+            />
+          </div>
             
           </form>
 

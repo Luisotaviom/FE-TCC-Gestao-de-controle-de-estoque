@@ -6,7 +6,8 @@ const Produtos = props => {
     id: null,
     nome: "",
     fornecedor_id: "",
-    categoria: ""
+    categoria: "",
+    ativo: true
   };
   const [currentProduto, setCurrentProduto] = useState(initialProdutoState);
   const [message, setMessage] = useState("");
@@ -28,7 +29,11 @@ const Produtos = props => {
 
   const handleInputChange = event => {
     const { name, value } = event.target;
-    setCurrentProduto({ ...currentProduto, [name]: value });
+    if (name === "ativo") {
+      setCurrentProduto({ ...currentProduto, [name]: event.target.checked });
+    } else {
+      setCurrentProduto({ ...currentProduto, [name]: value });
+    }
   };
 
 
@@ -75,6 +80,17 @@ const Produtos = props => {
                 onChange={handleInputChange}
               />
             </div>
+            <div className="form-group">
+            <label htmlFor="ativo">Ativo</label>
+            <input
+              type="checkbox"
+              className="form-control"
+              id="ativo"
+              name="ativo"
+              checked={currentProduto.ativo}
+              onChange={handleInputChange}
+            />
+          </div>
 
           </form>
 

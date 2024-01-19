@@ -11,3 +11,11 @@
   max-width: 400px;
   margin: auto;
 }
+
+.ativo {
+  color: green; /* Cor para células Ativas */
+}
+
+.inativo {
+  color: red; /* Cor para células Inativas */
+}
