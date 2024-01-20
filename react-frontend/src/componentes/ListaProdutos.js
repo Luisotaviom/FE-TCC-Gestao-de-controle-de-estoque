@@ -93,15 +93,15 @@ const ListaDeProdutos = (props) => {
   const columns = useMemo(
     () => [
       {
-        Header: "Id",
+        Header: "ID",
         accessor: "id",
       },
       {
-        Header: "nome",
+        Header: "Nome",
         accessor: "nome",
       },
       {
-        Header: "fornecedor_id",
+        Header: "Fornecedor ID",
         accessor: "fornecedor_id",
       },
       {
@@ -173,7 +173,7 @@ const ListaDeProdutos = (props) => {
         </div>
 
         <div>
-          {"Status Ativo: "}
+          {"Status: "}
           <select onChange={handleStatusChange} value={statusAtivo}>
             <option value="">Todos</option>
             <option value = {true} >Ativo</option>

@@ -8,7 +8,7 @@ const NovoFornecedor = (props) => {
     cidade: "",
     celular: "",
     email: "",
-    ativo: true // Adicionado o estado 'ativo' com valor padrão como true
+    ativo: true 
   };
   const [Fornecedor, setFornecedor] = useState(initialFornecedortate);
   const [submitted, setSubmitted] = useState(false);
@@ -51,7 +51,7 @@ const NovoFornecedor = (props) => {
   };
 
   const voltarParaLista = () => {
-    props.history.push("/Fornecedores");
+    props.history.push("/ListaDeFornecedores");
   };
 
   return (
@@ -60,7 +60,7 @@ const NovoFornecedor = (props) => {
         <div>
           <strong><p className="text-success">Criada com sucesso!</p></strong>
           <button className="btn btn-success" onClick={newFornecedor}>
-            Novo
+            Criar fornecedor
           </button>
           &nbsp;
           <button className="btn btn-success" onClick={voltarParaLista}>
@@ -82,7 +82,7 @@ const NovoFornecedor = (props) => {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="cidade">cidade</label>
+            <label htmlFor="cidade">Cidade</label>
             <input
               type="text"
               className="form-control"
@@ -94,7 +94,7 @@ const NovoFornecedor = (props) => {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="celular">celular</label>
+            <label htmlFor="celular">Telefone</label>
             <input
               type="text"
               className="form-control"
@@ -106,9 +106,9 @@ const NovoFornecedor = (props) => {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="email">email</label>
+            <label htmlFor="email">Email</label>
             <input
-              type="text"
+              type="email"
               className="form-control"
               id="email"
               required
@@ -128,7 +128,7 @@ const NovoFornecedor = (props) => {
             />
           </div>
           <button onClick={saveFornecedor} className="btn btn-success">
-            Criar
+            Criar fornecedor
           </button>
         </div>
       )}

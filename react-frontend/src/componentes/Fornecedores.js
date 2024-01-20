@@ -41,7 +41,7 @@ const Fornecedores = props => {
     FornecedoresDataService.update2(currentFornecedores.id, currentFornecedores)
       .then(response => {
         console.log(response.data);
-        setMessage("Troca de informações sobre a Fornecedores feita com sucesso!");
+        setMessage("Troca de informações sobre o fornecedor feita com sucesso!");
       })
       .catch(e => {
         console.log(e);
@@ -49,18 +49,15 @@ const Fornecedores = props => {
   };
 
   const voltarParaLista = () => {
-    props.history.push("/Fornecedores");
+    props.history.push("/ListaDeFornecedores");
   };
-
-  
-
 
 
   return (
     <div>
       {currentFornecedores ? (
         <div className="edit-form">
-          <h4>Fornecedores</h4>
+          <h4>Fornecedor</h4>
           <form>
             <div className="form-group">
               <label htmlFor="title">Nome</label>
@@ -74,7 +71,7 @@ const Fornecedores = props => {
               />
             </div>
             <div className="form-group">
-              <label htmlFor="title">cidade</label>
+              <label htmlFor="title">Cidade</label>
               <input
                 type="text"
                 className="form-control"
@@ -85,7 +82,7 @@ const Fornecedores = props => {
               />
             </div>
             <div className="form-group">
-              <label htmlFor="title">celular</label>
+              <label htmlFor="title">Telefone</label>
               <input
                 type="text"
                 className="form-control"
@@ -96,9 +93,9 @@ const Fornecedores = props => {
               />
             </div>
             <div className="form-group">
-              <label htmlFor="title">email</label>
+              <label htmlFor="title">Email</label>
               <input
-                type="text"
+                type="email"
                 className="form-control"
                 id="email"
                 name="email"

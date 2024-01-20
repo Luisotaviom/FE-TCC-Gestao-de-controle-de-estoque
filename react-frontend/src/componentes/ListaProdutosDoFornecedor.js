@@ -63,6 +63,12 @@ const ListaProdutosDoFornecedor = (props) => {
     setPage(1);
   };
 
+  const openProdutos = (rowIndex) => {
+    const id = produtosDoFornecedorRef.current[rowIndex].id;
+
+    props.history.push("/Produtos/" + id);
+  };
+
   const columns = useMemo(
     () => [
       {
@@ -76,6 +82,21 @@ const ListaProdutosDoFornecedor = (props) => {
       {
         Header: "categoria",
         accessor: "categoria",
+      },
+      {
+        Header: "Ações",
+        accessor: "actions",
+        Cell: (props) => {
+          const rowIdx = props.row.id;
+          return (
+            
+            <div>
+              <span onClick={() => openProdutos(rowIdx)}>
+                <button type="button" className="btn btn-warning btn-sm">Editar</button>
+              </span>
+            </div>
+          );
+        },
       },
     ],
     []
@@ -104,6 +125,8 @@ const ListaProdutosDoFornecedor = (props) => {
               </option>
             ))}
           </select>
+
+          
           
 
           <Pagination
@@ -117,6 +140,7 @@ const ListaProdutosDoFornecedor = (props) => {
             onChange={handlePageChange}
           />
         </div>
+        
 
         <table
           className="table table-striped table-bordered"

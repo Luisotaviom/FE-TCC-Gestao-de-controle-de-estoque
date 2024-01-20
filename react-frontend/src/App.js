@@ -1,5 +1,5 @@
 import React from "react"; // biblioteca principal
-import { Switch, Route, Link } from "react-router-dom"; // roteamento
+import { Switch, Route, Link, useLocation } from "react-router-dom"; // roteamento
 import "bootstrap/dist/css/bootstrap.min.css"; // importa bootstrap como estilo 
 import "./App.css"; // importa estilo do projeto
 import "@fortawesome/fontawesome-free/css/all.css"; // importa FA
@@ -23,16 +23,24 @@ import ListaDeMovimentacoes from "./componentes/ListaMovimentacoes";
 import NovaMovimentacao from "./componentes/NovaMovimentacao";
 import Movimentacoes from "./componentes/Movimentacoes";
 
-
+//componentes welcome
+import WelcomePage from "./componentes/WelcomePage";
 
 
 
 function App() {
+  const location = useLocation(); // Hook para obter a rota atual
+
+  // Função para verificar se a barra de navegação deve ser mostrada
+  const showNavBar = (pathname) => {
+    return pathname !== "/WelcomePage" && pathname !== "/";
+  };
   return (
     <div>
-      <nav className="navbar navbar-expand navbar-light bg-light">
-        <a href="/Fornecedores" className="navbar-brand">
-          Estoque
+      {showNavBar(location.pathname) && (
+       <nav className="navbar navbar-expand navbar-light bg-light">
+        <a href="/WelcomePage" className="navbar-brand">
+        Welcome
         </a>
         <div className="navbar-nav mr-auto">
           <li className="nav-item">
@@ -52,13 +60,15 @@ function App() {
           </li>
         </div>
       </nav>
+      )}
 
-      <div className="container mt-6">
+      <div className="container mt-3">
         <Switch>
           <Route exact path={["/", "/ListaDeProdutos"]} component={ListaDeProdutos} />
           <Route exact path={["/", "/ListaDeFornecedores"]} component={ListaDeFornecedores} />
           <Route exact path={["/", "/ListaDeMovimentacoes"]} component={ListaDeMovimentacoes} />
-          <Route exact path={["/", "/Produtos/fornecedor/:fornecedor_id"]} component={ListaProdutosDoFornecedor} />          
+          <Route exact path={["/", "/Produtos/fornecedor/:fornecedor_id"]} component={ListaProdutosDoFornecedor} /> 
+          <Route exact path={["/", "/WelcomePage"]} component={WelcomePage} />         
 
           <Route exact path="/NovoFornecedor" component={NovoFornecedor} />
           <Route path="/Produtos/fornecedor/:id/produto" component={CriarProduto} />

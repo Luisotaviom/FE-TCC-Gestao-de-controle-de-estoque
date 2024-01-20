@@ -1,7 +1,9 @@
-import React, { useState, useEffect, useMemo, useRef } from "react";
+import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import Pagination from "@material-ui/lab/Pagination";
 import MovimentacoesDataService from "../services/GerencyServiceMov";
 import { useTable } from "react-table";
+import styles from './css.module.css'; // Ajuste o caminho conforme necessário
+
 
 const ListaDeMovimentacoes = (props) => {
   /**
@@ -53,28 +55,27 @@ const ListaDeMovimentacoes = (props) => {
     }
   };
 
-  const openMovimentacoes = (rowIndex) => {
+  const openMovimentacoes = useCallback((rowIndex) => {
     const id = movimentacoesRef.current[rowIndex].id;
-
     props.history.push("/Movimentacoes/" + id);
-  };
+  }, [props.history, movimentacoesRef]);
 
-  const deleteMovimentacoes = (rowIndex) => {
+  const deleteMovimentacoes = useCallback((rowIndex) => {
     const id = movimentacoesRef.current[rowIndex].id;
-
     MovimentacoesDataService.remove(id)
       .then((response) => {
         props.history.push("/Movimentacoes");
-
-        let novasMovimentacoes= [...movimentacoesRef.current];
+  
+        let novasMovimentacoes = [...movimentacoesRef.current];
         novasMovimentacoes.splice(rowIndex, 1);
-
+  
         definirMovimentacoes(novasMovimentacoes);
       })
       .catch((e) => {
         console.log(e);
       });
-  };
+  }, [props.history, movimentacoesRef]); // Inclua todas as dependências externas que a função usa
+  
 
     const handleResponse = (response) => {
       const movimentacoes = response.data.content;
@@ -94,6 +95,7 @@ const ListaDeMovimentacoes = (props) => {
     setPage(value);
   };
 
+
   const handlePageSizeChange = (event) => {
     setPageSize(event.target.value);
     setPage(1);
@@ -111,31 +113,48 @@ const ListaDeMovimentacoes = (props) => {
   const columns = useMemo(
     () => [
       {
-        Header: "Id",
+        Header: "ID",
         accessor: "id",
       },
       {
-        Header: "produtoId",
+        Header: "Produto ID",
         accessor: "produto_id",
       },
       {
-        Header: "quantidade",
+        Header: "Quantidade",
         accessor: "quantidade",
       },
       {
-        Header: "valor",
+        Header: "Valor",
         accessor: "valor",
+        Cell: ({ value }) => `R$ ${value.toFixed(2).replace('.', ',')}`, // Adiciona R$ e formata o número
       },
       {
-        Header: "tipo",
+        Header: "Tipo",
         accessor: "tipo",
       },
       {
-        Header: "dataRegistro",
+        Header: "Data de movimentação",
         accessor: "dataRegistro",
+        Cell: ({ value }) => {
+          // Verificar se value (dataRegistro) é válido
+          if (!value) {
+            return "Data não disponível"; // Ou qualquer texto que você queira exibir para datas inválidas
+          }
+          const date = new Date(value);
+          const formattedDate = new Intl.DateTimeFormat('pt-BR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+          }).format(date);
+          return formattedDate; // Retorna a data formatada, por exemplo "01/03/2021, 12:00:00"
+        },
       },
       {
-        Header: "fornecedorId",
+        Header: "Fornecedor ID",
         accessor: "fornecedor_id",
       },
       {
@@ -143,23 +162,20 @@ const ListaDeMovimentacoes = (props) => {
         accessor: "actions",
         Cell: (props) => {
           const rowIdx = props.row.id;
-
           return (
-            <div>
-              <span onClick={() => openMovimentacoes(rowIdx)}>
-                <button type="button" className="btn btn-warning btn-sm">Editar produto</button>
-              </span>
-              &nbsp;
-              <span onClick={() => deleteMovimentacoes(rowIdx)}>
-                <button type="button" className="btn btn-danger btn-sm">Remover produto</button>
-              </span>
-              &nbsp;
+            <div className="action-buttons">
+              <button type="button" className="btn btn-warning btn-sm" onClick={() => openMovimentacoes(rowIdx)}>
+                Editar movimentação
+              </button>
+              <button type="button" className="btn btn-danger btn-sm" onClick={() => deleteMovimentacoes(rowIdx)}>
+                Excluir movimentação
+              </button>
             </div>
           );
         },
       },
     ],
-    []
+    [openMovimentacoes, deleteMovimentacoes] // Agora essas funções são estáveis e não mudarão a cada renderização
   );
 
   const {
@@ -174,17 +190,32 @@ const ListaDeMovimentacoes = (props) => {
   });
 
   return (
-    <div className="list row">
-      <div className="col-md-12 list">
-        <div className="mt-3">
-          {"Itens por página: "}
-          <select onChange={handlePageSizeChange} value={pageSize}>
-            {pageSizes.map((size) => (
-              <option key={size} value={size}>
-                {size}
-              </option>
-            ))}
+    <div className={`${styles.list} row`}>
+    <div className="col-md-12">
+      <h2 className={styles.h2}>Lista de movimentacoes</h2>
+      <div className="d-flex justify-content-between mt-3">
+      <div>
+            <span className="mr-2">Itens por página:</span>
+            <select className="custom-select" style={{ width: 'auto' }} onChange={handlePageSizeChange} value={pageSize}>
+              {pageSizes.map((size) => (
+                <option key={size} value={size}>
+                  {size}
+                </option>
+              ))}
           </select>
+          </div>
+          <div>
+          {"Tipo de Movimentação: "}
+          <select onChange={handleTipoMovimentacaoChange} value={tipoMovimentacao}>
+            <option value="">Todos</option>
+            <option value="E">Entrada</option>
+            <option value="S">Saída</option>
+          </select>
+        </div>
+            <button type="button" className="btn btn-success" onClick={() => props.history.push("/NovaMovimentacao")}>
+              Criar movimentação
+            </button>
+          </div>
 
           <Pagination
             color="primary"
@@ -198,18 +229,9 @@ const ListaDeMovimentacoes = (props) => {
           />
         </div>
 
-        <div>
-          {"Tipo de Movimentação: "}
-          <select onChange={handleTipoMovimentacaoChange} value={tipoMovimentacao}>
-            <option value="">Todos</option>
-            <option value="E">Entrada</option>
-            <option value="S">Saída</option>
-          </select>
-        </div>
-
         <table
-          className="table table-striped table-bordered"
           {...getTableProps()}
+          className={`table ${styles.listTable}`}
         >
           <thead>
             {headerGroups.map((headerGroup) => (
@@ -251,7 +273,7 @@ const ListaDeMovimentacoes = (props) => {
           </select>
           <div className="mt-3">
             <button type="button" className="btn btn-success" onClick={() => props.history.push("/NovaMovimentacao")}>
-            Adicionar Movimentacoes
+            Criar Movimentacoes
             </button>
           </div>
 
@@ -266,11 +288,7 @@ const ListaDeMovimentacoes = (props) => {
             onChange={handlePageChange}
           />
         </div>
-        
-
-
       </div>
-    </div>
   );
 };
 

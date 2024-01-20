@@ -94,7 +94,7 @@ const NovaMovimentacao = (props) => {
   };
 
   const voltarParaLista = () => {
-    props.history.push("/Movimentacaoes");
+    props.history.push("/ListaDeMovimentacoes");
   };
 
 
@@ -104,7 +104,7 @@ const NovaMovimentacao = (props) => {
         <div>
           <strong><p className="text-success">Criada com sucesso!</p></strong>
           <button className="btn btn-success" onClick={newMovimentacao}>
-            Novo
+            Nova movimentação
           </button>
           &nbsp;
           <button className="btn btn-success" onClick={voltarParaLista}>
@@ -114,7 +114,7 @@ const NovaMovimentacao = (props) => {
       ) : (
         <div>
           <div className="form-group">
-            <label htmlFor="produto_id">produto_id</label>
+            <label htmlFor="produto_id">Produto ID</label>
             <input
               type="text"
               className="form-control"
@@ -126,7 +126,7 @@ const NovaMovimentacao = (props) => {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="quantidade">quantidade</label>
+            <label htmlFor="quantidade">Quantidade</label>
             <input
               type="text"
               className="form-control"
@@ -138,7 +138,7 @@ const NovaMovimentacao = (props) => {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="valor">valor</label>
+            <label htmlFor="valor">Valor</label>
             <input
               type="text"
               className="form-control"
@@ -150,7 +150,7 @@ const NovaMovimentacao = (props) => {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="tipo">tipo</label>
+            <label htmlFor="tipo">Tipo</label>
             <select
               className="form-control"
               id="tipo"
@@ -165,7 +165,7 @@ const NovaMovimentacao = (props) => {
             </select>
           </div>
           <div className="form-group">
-            <label htmlFor="dataRegistro">dataRegistro</label>
+            <label htmlFor="dataRegistro">Data de Registro</label>
             <input
               type="datetime-local"
               className="form-control"
@@ -177,7 +177,7 @@ const NovaMovimentacao = (props) => {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="fornecedor_id">fornecedor_id</label>
+            <label htmlFor="fornecedor_id">Fornecedor ID</label>
             <input
               type="text"
               className="form-control"
@@ -189,7 +189,7 @@ const NovaMovimentacao = (props) => {
             />
           </div>
           <button onClick={saveMovimentacao} className="btn btn-success" disabled={!isFormValid}>
-            Criar
+            Criar movimentação
           </button>
         </div>
       )}

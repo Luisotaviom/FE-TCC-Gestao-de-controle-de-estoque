@@ -54,8 +54,9 @@ const CriarProduto = (props) => {
   };
 
   const voltarParaLista = () => {
-    props.history.push("/Fornecedores");
+    props.history.push("/ListadeProdutos");
   };
+
 
   return (
     <div className="edit-form">
@@ -73,7 +74,7 @@ const CriarProduto = (props) => {
       ) : (
         <div>
           <div className="form-group">
-            <label htmlFor="nome">nome</label>
+            <label htmlFor="nome">Nome</label>
             <input
               type="text"
               className="form-control"
@@ -86,7 +87,7 @@ const CriarProduto = (props) => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="categoria">categoria</label>
+            <label htmlFor="categoria">Categoria</label>
             <input
               type="text"
               className="form-control"
@@ -108,11 +109,11 @@ const CriarProduto = (props) => {
             />
           </div>
           <button onClick={salvar} className="btn btn-success">
-            Criar
+            Criar produto
           </button>
           &nbsp;
           <button onClick={voltarParaLista} className="btn btn-secondary">
-            Voltar
+            Voltar 
           </button>
 
         </div>

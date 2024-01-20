@@ -54,7 +54,7 @@ const Movimentacoes = (props) => {
   
 
   const voltarParaLista = () => {
-    props.history.push("/Movimentacoes");
+    props.history.push("/ListaDeMovimentacoes");
   };
 
   const generateInput = (name, label, type, required) => (

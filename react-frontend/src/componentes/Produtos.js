@@ -49,7 +49,7 @@ const Produtos = props => {
   };
 
   const voltarParaLista = () => {
-    props.history.push("/Produtos");
+    props.history.push("/ListadeProdutos");
   };
 
   return (
@@ -59,7 +59,7 @@ const Produtos = props => {
           <h4>Produto</h4>
           <form>
             <div className="form-group">
-              <label htmlFor="title">nome</label>
+              <label htmlFor="title">Nome</label>
               <input
                 type="text"
                 className="form-control"
@@ -70,7 +70,7 @@ const Produtos = props => {
               />
             </div>
             <div className="form-group">
-              <label htmlFor="title">categoria</label>
+              <label htmlFor="title">Categoria</label>
               <input
                 type="text"
                 className="form-control"
@@ -95,7 +95,7 @@ const Produtos = props => {
           </form>
 
 
-          <button type="button" onClick={updateProduto} className="btn btn-success btn-sm">Atualizar</button>
+          <button type="button" onClick={updateProduto} className="btn btn-success btn-sm">Atualizar produto</button>
           &nbsp;
           <button onClick={voltarParaLista} className="btn btn-secondary btn-sm">Voltar</button>
 

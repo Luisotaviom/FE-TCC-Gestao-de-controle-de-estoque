@@ -2,6 +2,8 @@ import React, { useState, useEffect, useMemo, useRef } from "react";
 import Pagination from "@material-ui/lab/Pagination";
 import FornecedoresDataService from "../services/GerencyService2";
 import { useTable } from "react-table";
+import styles from './css.module.css'; // Ajuste o caminho conforme necessário
+
 
 const ListaDeFornecedores = (props) => {
   /**
@@ -123,27 +125,27 @@ const ListaDeFornecedores = (props) => {
   const columns = useMemo(
     () => [
       {
-        Header: "Id",
+        Header: "ID",
         accessor: "id",
       },
       {
-        Header: "nome",
+        Header: "Nome",
         accessor: "nome",
       },
       {
-        Header: "cidade",
+        Header: "Cidade",
         accessor: "cidade",
       },
       {
-        Header: "celular",
+        Header: "Telefone",
         accessor: "celular",
       },
       {
-        Header: "email",
+        Header: "Email",
         accessor: "email",
       },
       {
-        Header: "Ativo",
+        Header: "Status",
         accessor: "ativo",
         Cell: ({ row }) => (
           <div style={{ textAlign: "center" }} className={row.original.ativo ? "ativo" : "inativo"}>
@@ -158,23 +160,18 @@ const ListaDeFornecedores = (props) => {
           const rowIdx = props.row.id;
 
           return (
-            <div>
+            <div className="action-buttons">
               <span onClick={() => openFornecedores(rowIdx)}>
-                <button type="button" className="btn btn-warning btn-sm">Editar produto</button>
+                <button type="button" className="btn btn-warning btn-sm action-button">Editar fornecedor</button>
               </span>
-              &nbsp;
-              <span onClick={() => deleteFornecedores(rowIdx)}>
-                <button type="button" className="btn btn-danger btn-sm">Remover produto</button>
-              </span>
-              &nbsp;
               <span onClick={() => openFornecedorProduto(rowIdx)}>
-                <button type="button" className="btn btn-success btn-sm">Ver produtos</button>
+                <button type="button" className="btn btn-success btn-sm action-button">Ver produtos</button>
               </span>
-              &nbsp;
               <span onClick={() => openNovoProduto(rowIdx)}>
-                <button type="button" className="btn btn-success btn-sm">Adicionar produto</button>
+                <button type="button" className="btn btn-success btn-sm action-button">Adicionar produto no fornecedor</button>
               </span>
             </div>
+
           );
         },
       },
@@ -194,17 +191,32 @@ const ListaDeFornecedores = (props) => {
   });
 
   return (
-    <div className="list row">
-      <div className="col-md-12 list">
-        <div className="mt-3">
-          {"Itens por página: "}
-          <select onChange={handlePageSizeChange} value={pageSize}>
-            {pageSizes.map((size) => (
-              <option key={size} value={size}>
-                {size}
-              </option>
-            ))}
-          </select>
+    <div className={`${styles.list} row`}>
+    <div className="col-md-12">
+      <h2 className={styles.h2}>Lista de Fornecedores</h2>
+      <div className="d-flex justify-content-between mt-3">
+      <div>
+            <span className="mr-2">Itens por página:</span>
+            <select className="custom-select" style={{ width: 'auto' }} onChange={handlePageSizeChange} value={pageSize}>
+              {pageSizes.map((size) => (
+                <option key={size} value={size}>
+                  {size}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+          <span className="mr-2">Status:</span>
+            <select className="custom-select" style={{ width: 'auto' }} onChange={handleStatusChange} value={statusAtivo}>
+              <option value="">Todos</option>
+              <option value={true}>Ativo</option>
+              <option value={false}>Desativado</option>
+            </select>
+          </div>
+            <button type="button" className="btn btn-success" onClick={() => props.history.push("/NovoFornecedor")}>
+              Criar Fornecedores
+            </button>
+          </div>
 
           <Pagination
             color="primary"
@@ -218,18 +230,9 @@ const ListaDeFornecedores = (props) => {
           />
         </div>
 
-        <div>
-          {"Status Ativo: "}
-          <select onChange={handleStatusChange} value={statusAtivo}>
-            <option value="">Todos</option>
-            <option value = {true} >Ativo</option>
-            <option value = {false} >Desativado</option>
-          </select>
-        </div>
-
         <table
-          className="table table-striped table-bordered"
           {...getTableProps()}
+          className={`table ${styles.listTable}`}
         >
           <thead>
             {headerGroups.map((headerGroup) => (
@@ -260,7 +263,7 @@ const ListaDeFornecedores = (props) => {
           </tbody>
         </table>
 
-        <div className="mt-3">
+        <div className={`pagination-container ${styles.paginationContainer}`}>
           {"Itens por página: "}
           <select onChange={handlePageSizeChange} value={pageSize}>
             {pageSizes.map((size) => (
@@ -269,11 +272,6 @@ const ListaDeFornecedores = (props) => {
               </option>
             ))}
           </select>
-          <div className="mt-3">
-            <button type="button" className="btn btn-success" onClick={() => props.history.push("/NovoFornecedor")}>
-            Adicionar Fornecedores
-            </button>
-          </div>
 
           <Pagination
             color="primary"
@@ -286,11 +284,7 @@ const ListaDeFornecedores = (props) => {
             onChange={handlePageChange}
           />
         </div>
-        
-
-
-      </div>
-    </div>
+      </div>    
   );
 };
 
