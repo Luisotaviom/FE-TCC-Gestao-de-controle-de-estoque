@@ -86,24 +86,6 @@ const ListaDeFornecedores = (props) => {
   };
   
 
-
-  const deleteFornecedores = (rowIndex) => {
-    const id = fornecedoresRef.current[rowIndex].id;
-
-    FornecedoresDataService.remove2(id)
-      .then((response) => {
-        props.history.push("/Fornecedores");
-
-        let novasFornecedores= [...fornecedoresRef.current];
-        novasFornecedores.splice(rowIndex, 1);
-
-        definirFornecedores(novasFornecedores);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-
   useEffect(buscarFornecedores, [page, pageSize, statusAtivo]);
 
   const handlePageChange = (event, value) => {

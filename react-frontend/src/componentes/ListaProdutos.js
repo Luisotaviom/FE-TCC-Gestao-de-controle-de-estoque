@@ -2,6 +2,8 @@ import React, { useState, useEffect, useMemo, useRef } from "react";
 import Pagination from "@material-ui/lab/Pagination";
 import ProdutosDataService from "../services/GerencyService";
 import { useTable } from "react-table";
+import styles from './css.module.css'; // Ajuste o caminho conforme necessário
+
 
 const ListaDeProdutos = (props) => {
   /**
@@ -148,17 +150,32 @@ const ListaDeProdutos = (props) => {
   });
 
   return (
-    <div className="list row">
-      <div className="col-md-12 list">
-        <div className="mt-3">
-          {"Itens por página: "}
-          <select onChange={handlePageSizeChange} value={pageSize}>
-            {pageSizes.map((size) => (
-              <option key={size} value={size}>
-                {size}
-              </option>
-            ))}
-          </select>
+    <div className={`${styles.list} row`}>
+    <div className="col-md-12">
+      <h2 className={styles.h2}>Lista de Produtos</h2>
+      <div className="d-flex justify-content-between mt-3">
+      <div>
+            <span className="mr-2">Itens por página:</span>
+            <select className="custom-select" style={{ width: 'auto' }} onChange={handlePageSizeChange} value={pageSize}>
+              {pageSizes.map((size) => (
+                <option key={size} value={size}>
+                  {size}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+          <span className="mr-2">Status:</span>
+            <select className="custom-select" style={{ width: 'auto' }} onChange={handleStatusChange} value={statusAtivo}>
+              <option value="">Todos</option>
+              <option value={true}>Ativo</option>
+              <option value={false}>Desativado</option>
+            </select>
+          </div>
+          <button type="button" className="btn btn-success" onClick={() => props.history.push("/ListaDeFornecedores")}>
+              Criar Produto
+            </button>
+          </div>
 
           <Pagination
             color="primary"
@@ -172,19 +189,9 @@ const ListaDeProdutos = (props) => {
           />
         </div>
 
-        <div>
-          {"Status: "}
-          <select onChange={handleStatusChange} value={statusAtivo}>
-            <option value="">Todos</option>
-            <option value = {true} >Ativo</option>
-            <option value = {false} >Desativado</option>
-          </select>
-        </div>
-
-
         <table
-          className="table table-striped table-bordered"
-          {...getTableProps()}
+            {...getTableProps()}
+            className={`table ${styles.listTable}`}
         >
           <thead>
             {headerGroups.map((headerGroup) => (
@@ -240,7 +247,6 @@ const ListaDeProdutos = (props) => {
 
 
       </div>
-    </div>
   );
 };
 

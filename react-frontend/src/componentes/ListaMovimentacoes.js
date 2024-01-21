@@ -18,42 +18,72 @@ const ListaDeMovimentacoes = (props) => {
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(4);
   const pageSizes = [4, 8, 12];
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  
+
 
   movimentacoesRef.current = movimentacoes;
 
-  const buscarVariaveisDePaginacao = (page, pageSize, tipo) => {
-    let params = {};
+const buscarVariaveisDePaginacao = (page, pageSize, tipo, dataRegistro) => {
+  let params = {};
 
-    if (page) {
-      params["page"] = page - 1;
-    }
+  if (page) {
+    params["page"] = page - 1;
+  }
 
-    if (pageSize) {
-      params["size"] = pageSize;
-    }
+  if (pageSize) {
+    params["size"] = pageSize;
+  }
 
-    if (tipo) {
-      params["tipo"] = tipo;
-    }
+  if (tipo) {
+    params["tipo"] = tipo;
+  }
 
-    return params;
-  };
+  if (dataRegistro && dataRegistro.start && dataRegistro.end) {
+    params["start"] = dataRegistro.start;
+    params["end"] = dataRegistro.end;
+  }
+
+  return params;
+};
+
+  
+  
 
   const buscarMovimentacoes = () => {
-    const params = buscarVariaveisDePaginacao(page, pageSize);
-
-    if (tipoMovimentacao) {
-        // Se um tipo específico foi selecionado, use getTipos
-        MovimentacoesDataService.getTipos({ ...params, tipo: tipoMovimentacao })
-            .then(handleResponse)
-            .catch(handleError);
-    } else {
-        // Se nenhum tipo foi selecionado, busque todas as movimentações
-        MovimentacoesDataService.getAll(params)
-            .then(handleResponse)
-            .catch(handleError);
+    const params = buscarVariaveisDePaginacao(page, pageSize, tipoMovimentacao, { start: startDate, end: endDate });
+  
+    // Se ambos tipo e intervalo de datas são fornecidos
+    if (tipoMovimentacao && startDate && endDate) {
+      MovimentacoesDataService.getDataETipo(params)
+        .then(handleResponse)
+        .catch(handleError);
+    }
+    // Se apenas o tipo é fornecido
+    else if (tipoMovimentacao) {
+      MovimentacoesDataService.getTipos(params)
+        .then(handleResponse)
+        .catch(handleError);
+    }
+    // Se apenas o intervalo de datas é fornecido
+    else if (startDate && endDate) {
+      MovimentacoesDataService.getData(params)
+        .then(handleResponse)
+        .catch(handleError);
+    }
+    // Se nenhum filtro é fornecido, busca todas as movimentações
+    else {
+      MovimentacoesDataService.getAll(params)
+        .then(handleResponse)
+        .catch(handleError);
     }
   };
+  
+  
+  
+  
+  
 
   const openMovimentacoes = useCallback((rowIndex) => {
     const id = movimentacoesRef.current[rowIndex].id;
@@ -76,6 +106,17 @@ const ListaDeMovimentacoes = (props) => {
       });
   }, [props.history, movimentacoesRef]); // Inclua todas as dependências externas que a função usa
   
+
+  const searchByDateRange = () => {
+    const params = { start: startDate, end: endDate };
+    MovimentacoesDataService.getData(params)
+        .then(response => {
+            definirMovimentacoes(response.data.content); // Ou apenas response.data, dependendo da estrutura da resposta
+        })
+        .catch(error => {
+            console.error('Erro ao buscar dados:', error);
+        });
+  };
 
     const handleResponse = (response) => {
       const movimentacoes = response.data.content;
@@ -109,6 +150,16 @@ const ListaDeMovimentacoes = (props) => {
 
     setTipoMovimentacao(tipoValido);
   };
+
+  const handleStartDateChange = (event) => {
+    setStartDate(event.target.value);
+  };
+
+  const handleEndDateChange = (event) => {
+      setEndDate(event.target.value);
+  };
+
+  
 
   const columns = useMemo(
     () => [
@@ -204,7 +255,7 @@ const ListaDeMovimentacoes = (props) => {
               ))}
           </select>
           </div>
-          <div>
+        <div>
           {"Tipo de Movimentação: "}
           <select onChange={handleTipoMovimentacaoChange} value={tipoMovimentacao}>
             <option value="">Todos</option>
@@ -212,10 +263,26 @@ const ListaDeMovimentacoes = (props) => {
             <option value="S">Saída</option>
           </select>
         </div>
+        <div>
+        <input
+          type="datetime-local"
+          name="startDate"
+          value={startDate}
+          onChange={handleStartDateChange}
+        />
+          <input
+            type="datetime-local"
+            name="endDate"
+            value={endDate}
+            onChange={handleEndDateChange}
+          />
+          <button onClick={buscarMovimentacoes}>Buscar</button>
+        </div>
             <button type="button" className="btn btn-success" onClick={() => props.history.push("/NovaMovimentacao")}>
               Criar movimentação
             </button>
-          </div>
+        </div>
+      
 
           <Pagination
             color="primary"

@@ -24,6 +24,13 @@ const getTipos = (params) => {
   return http.get("/Movimentacoes/buscarPorTipo", { params });
 };
 
+const getData = (params) => {
+  return http.get("/Movimentacoes/buscarPorData", { params });
+};
+
+const getDataETipo = (params) => {
+  return http.get("/Movimentacoes/buscar", { params });
+};
 
 const GerencyServerMov = {
   getAll,
@@ -31,7 +38,9 @@ const GerencyServerMov = {
   create,
   update,
   getTipos,
-  remove
+  remove,
+  getData,
+  getDataETipo
 };
 
 
