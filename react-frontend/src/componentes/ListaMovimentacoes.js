@@ -48,41 +48,30 @@ const buscarVariaveisDePaginacao = (page, pageSize, tipo, dataRegistro) => {
   return params;
 };
 
-  
-  
-
   const buscarMovimentacoes = () => {
     const params = buscarVariaveisDePaginacao(page, pageSize, tipoMovimentacao, { start: startDate, end: endDate });
   
-    // Se ambos tipo e intervalo de datas são fornecidos
     if (tipoMovimentacao && startDate && endDate) {
       MovimentacoesDataService.getDataETipo(params)
         .then(handleResponse)
         .catch(handleError);
     }
-    // Se apenas o tipo é fornecido
     else if (tipoMovimentacao) {
       MovimentacoesDataService.getTipos(params)
         .then(handleResponse)
         .catch(handleError);
     }
-    // Se apenas o intervalo de datas é fornecido
     else if (startDate && endDate) {
       MovimentacoesDataService.getData(params)
         .then(handleResponse)
         .catch(handleError);
     }
-    // Se nenhum filtro é fornecido, busca todas as movimentações
     else {
       MovimentacoesDataService.getAll(params)
         .then(handleResponse)
         .catch(handleError);
     }
   };
-  
-  
-  
-  
   
 
   const openMovimentacoes = useCallback((rowIndex) => {
@@ -104,19 +93,7 @@ const buscarVariaveisDePaginacao = (page, pageSize, tipo, dataRegistro) => {
       .catch((e) => {
         console.log(e);
       });
-  }, [props.history, movimentacoesRef]); // Inclua todas as dependências externas que a função usa
-  
-
-  const searchByDateRange = () => {
-    const params = { start: startDate, end: endDate };
-    MovimentacoesDataService.getData(params)
-        .then(response => {
-            definirMovimentacoes(response.data.content); // Ou apenas response.data, dependendo da estrutura da resposta
-        })
-        .catch(error => {
-            console.error('Erro ao buscar dados:', error);
-        });
-  };
+  }, [props.history, movimentacoesRef]); 
 
     const handleResponse = (response) => {
       const movimentacoes = response.data.content;
@@ -132,7 +109,7 @@ const buscarVariaveisDePaginacao = (page, pageSize, tipo, dataRegistro) => {
 
   useEffect(buscarMovimentacoes, [page, pageSize, tipoMovimentacao]);
 
-  const handlePageChange = (event, value) => {
+  const handlePageChange = (value) => {
     setPage(value);
   };
 
@@ -144,8 +121,6 @@ const buscarVariaveisDePaginacao = (page, pageSize, tipo, dataRegistro) => {
 
   const handleTipoMovimentacaoChange = (event) => {
     const valor = event.target.value;
-
-    // Transformar para maiúsculo e verificar se é "E" ou "S"
     const tipoValido = (valor === "E" || valor === "S") ? valor.toUpperCase() : "";
 
     setTipoMovimentacao(tipoValido);
@@ -159,8 +134,6 @@ const buscarVariaveisDePaginacao = (page, pageSize, tipo, dataRegistro) => {
       setEndDate(event.target.value);
   };
 
-  
-
   const columns = useMemo(
     () => [
       {
@@ -168,9 +141,10 @@ const buscarVariaveisDePaginacao = (page, pageSize, tipo, dataRegistro) => {
         accessor: "id",
       },
       {
-        Header: "Produto ID",
-        accessor: "produto_id",
-      },
+        Header: "Produto",
+        accessor: row => `${row.produto_id} (${row.produtoNome})`,
+        id: "produto", // Este é um identificador único para a coluna, necessário se você usa uma função para accessor
+      },      
       {
         Header: "Quantidade",
         accessor: "quantidade",
@@ -205,9 +179,10 @@ const buscarVariaveisDePaginacao = (page, pageSize, tipo, dataRegistro) => {
         },
       },
       {
-        Header: "Fornecedor ID",
-        accessor: "fornecedor_id",
-      },
+        Header: "Fornecedor",
+        accessor: row => `${row.fornecedor_id} (${row.fornecedorNome})`,
+        id: "fornecedor", // Este é um identificador único para a coluna, necessário se você usa uma função para accessor
+      },      
       {
         Header: "Ações",
         accessor: "actions",
@@ -245,42 +220,40 @@ const buscarVariaveisDePaginacao = (page, pageSize, tipo, dataRegistro) => {
     <div className="col-md-12">
       <h2 className={styles.h2}>Lista de movimentacoes</h2>
       <div className="d-flex justify-content-between mt-3">
-      <div>
-            <span className="mr-2">Itens por página:</span>
-            <select className="custom-select" style={{ width: 'auto' }} onChange={handlePageSizeChange} value={pageSize}>
-              {pageSizes.map((size) => (
-                <option key={size} value={size}>
-                  {size}
-                </option>
-              ))}
-          </select>
+        <div>
+              <span className="mr-2">Itens por página:</span>
+              <select className="custom-select" style={{ width: 'auto' }} onChange={handlePageSizeChange} value={pageSize}>
+                {pageSizes.map((size) => (
+                  <option key={size} value={size}>
+                    {size}
+                  </option>
+                ))}
+            </select>
+            </div>
+          <div>
+            {"Tipo de Movimentação: "}
+            <select onChange={handleTipoMovimentacaoChange} value={tipoMovimentacao}>
+              <option value="">Todos</option>
+              <option value="E">Entrada</option>
+              <option value="S">Saída</option>
+            </select>
           </div>
-        <div>
-          {"Tipo de Movimentação: "}
-          <select onChange={handleTipoMovimentacaoChange} value={tipoMovimentacao}>
-            <option value="">Todos</option>
-            <option value="E">Entrada</option>
-            <option value="S">Saída</option>
-          </select>
-        </div>
-        <div>
-        <input
-          type="datetime-local"
-          name="startDate"
-          value={startDate}
-          onChange={handleStartDateChange}
-        />
+          <div>
+          {"Buscar por data: "}
           <input
             type="datetime-local"
-            name="endDate"
-            value={endDate}
-            onChange={handleEndDateChange}
+            name="startDate"
+            value={startDate}
+            onChange={handleStartDateChange}
           />
-          <button onClick={buscarMovimentacoes}>Buscar</button>
-        </div>
-            <button type="button" className="btn btn-success" onClick={() => props.history.push("/NovaMovimentacao")}>
-              Criar movimentação
-            </button>
+            <input
+              type="datetime-local"
+              name="endDate"
+              value={endDate}
+              onChange={handleEndDateChange}
+            />
+            <button onClick={buscarMovimentacoes}>Buscar</button>
+          </div>
         </div>
       
 

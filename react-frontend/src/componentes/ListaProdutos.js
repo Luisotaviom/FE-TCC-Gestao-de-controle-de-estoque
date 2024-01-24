@@ -103,9 +103,10 @@ const ListaDeProdutos = (props) => {
         accessor: "nome",
       },
       {
-        Header: "Fornecedor ID",
-        accessor: "fornecedor_id",
-      },
+        Header: "Fornecedor",
+        accessor: row => `${row.fornecedor_id} (${row.fornecedorNome})`,
+        id: "fornecedor", // Este é um identificador único para a coluna, necessário se você usa uma função para accessor
+      },  
       {
         Header: "Categoria",
         accessor: "categoria",

@@ -28,19 +28,13 @@
   /* Estilos para botões e suas ações */
   .action-buttons {
     display: flex;
-    justify-content: flex-start;
-    gap: 10px; /* Adiciona um espaçamento entre os botões */
+    gap: 10px; /* Espaçamento entre os botões */
   }
   
 /* Estilos para os botões */
-.action-button {
-    display: block; /* Faz cada botão ocupar sua própria linha */
-    margin-bottom: 5px; /* Adiciona espaço abaixo de cada botão */
-    padding: 0.25rem 0.5rem; /* Ajuste o preenchimento dos botões pequenos */
-    border-radius: 0.2rem; /* Borda arredondada para suavizar as bordas do botão */
-    font-size: 0.875rem; /* Tamanho da fonte para os botões pequenos */
-    line-height: 1.5; /* A linha da altura para alinhar o texto do botão */
-    text-align: center; /* Centraliza o texto dentro do botão */
+  .action-button {
+    padding: 5px 10px; /* Padding para aumentar a área de clique */
+    transition: transform 0.1s ease-in-out; /* Animação para o efeito de clique */
   }
   
   .action-button-editar {
@@ -102,6 +96,16 @@
     width: 100%; /* Ocupa toda a largura do container para alinhar com os outros botões */
   }
   
-  .action-button:last-child {
-    margin-bottom: 0;
+
+
+/* Se precisar de mais espaçamento no topo e na base dos botões */
+.action-buttons > span {
+  display: block;
+  margin-bottom: 500px; /* Espaçamento entre as linhas de botões, se estiverem empilhados */
+}
+
+  .action-button:hover {
+    transform: scale(1.05); /* Efeito de hover para dar feedback ao usuário */
+    cursor: pointer; /* Muda o cursor para indicar clicabilidade */
   }
+  
