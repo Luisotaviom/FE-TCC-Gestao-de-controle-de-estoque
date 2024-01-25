@@ -32,6 +32,15 @@ const getDataETipo = (params) => {
   return http.get("/Movimentacoes/buscar", { params });
 };
 
+const getRelatorioSemanal= (params) => {
+  return http.get("Movimentacoes/relatorio/semanal", { params });
+};
+
+const getRelatorioMensal = (params) => {
+  return http.get("/Movimentacoes/relatorio/mensal", { params });
+};
+
+
 const GerencyServerMov = {
   getAll,
   get,
@@ -40,7 +49,9 @@ const GerencyServerMov = {
   getTipos,
   remove,
   getData,
-  getDataETipo
+  getDataETipo,
+  getRelatorioSemanal,
+  getRelatorioMensal
 };
 
 

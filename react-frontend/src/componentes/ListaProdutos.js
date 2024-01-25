@@ -18,10 +18,12 @@ const ListaDeProdutos = (props) => {
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(4);
   const pageSizes = [4, 8, 12];
+  const [searchTerm, setSearchTerm] = useState("");
+
 
   produtosRef.current = produtos;
 
-  const buscarVariaveisDePaginacao = (page, pageSize, ativo) => {
+  const buscarVariaveisDePaginacao = (page, pageSize, ativo, nome) => {
     let params = {};
 
     if (page) {
@@ -35,25 +37,37 @@ const ListaDeProdutos = (props) => {
     if (ativo) {
       params["ativo"] = ativo;
     }
+    
+    if (nome) {
+      params["nome"] = nome;
+    }
 
     return params;
   };
 
+
   const buscarProdutos = () => {
-    const params = buscarVariaveisDePaginacao(page, pageSize, statusAtivo);
-  
-    if (statusAtivo !== "") {
-      // Se um status específico foi selecionado, use getFornecedoresPorStatus
-      ProdutosDataService.getStatus({ ...params, ativo: statusAtivo })
+    // Aqui, substitua 'nome' por 'searchTerm'
+    const params = buscarVariaveisDePaginacao(page, pageSize, statusAtivo, searchTerm);
+    
+    if (searchTerm) {
+      // Se um termo de pesquisa foi fornecido, use o serviço correspondente
+      ProdutosDataService.getNome(params)
+        .then(handleResponse)
+        .catch(handleError);
+    } else if (statusAtivo !== "") {
+      // Se um status específico foi selecionado, busca por status
+      ProdutosDataService.getStatus(params)
         .then(handleResponse)
         .catch(handleError);
     } else {
-      // Se nenhum status foi selecionado, busque todos os fornecedores
+      // Se nenhum status ou termo de pesquisa foi fornecido, busca todos os produtos
       ProdutosDataService.getAll(params)
         .then(handleResponse)
         .catch(handleError);
     }
   };
+  
 
   const handleResponse = (response) => {
     const movimentacoes = response.data.content;
@@ -155,28 +169,34 @@ const ListaDeProdutos = (props) => {
     <div className="col-md-12">
       <h2 className={styles.h2}>Lista de Produtos</h2>
       <div className="d-flex justify-content-between mt-3">
-      <div>
-            <span className="mr-2">Itens por página:</span>
-            <select className="custom-select" style={{ width: 'auto' }} onChange={handlePageSizeChange} value={pageSize}>
-              {pageSizes.map((size) => (
-                <option key={size} value={size}>
-                  {size}
-                </option>
-              ))}
-            </select>
+        <div>
+          <span className="mr-2">Itens por página:</span>
+          <select className="custom-select" style={{ width: 'auto' }} onChange={handlePageSizeChange} value={pageSize}>
+            {pageSizes.map((size) => (
+              <option key={size} value={size}>
+                {size}
+              </option>
+            ))}
+          </select>
+        </div>
+          <div>
+            <span className="mr-2">Status:</span>
+              <select className="custom-select" style={{ width: 'auto' }} onChange={handleStatusChange} value={statusAtivo}>
+                <option value="">Todos</option>
+                <option value={true}>Ativo</option>
+                <option value={false}>Desativado</option>
+              </select>
           </div>
           <div>
-          <span className="mr-2">Status:</span>
-            <select className="custom-select" style={{ width: 'auto' }} onChange={handleStatusChange} value={statusAtivo}>
-              <option value="">Todos</option>
-              <option value={true}>Ativo</option>
-              <option value={false}>Desativado</option>
-            </select>
+            <input
+              type="text"
+              placeholder="Buscar por nome"
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+            />
+            <button onClick={buscarProdutos}>Pesquisar</button>
           </div>
-          <button type="button" className="btn btn-success" onClick={() => props.history.push("/ListaDeFornecedores")}>
-              Criar Produto
-            </button>
-          </div>
+      </div>
 
           <Pagination
             color="primary"
@@ -222,6 +242,7 @@ const ListaDeProdutos = (props) => {
             })}
           </tbody>
         </table>
+        
 
         <div className="mt-3">
           {"Itens por página: "}
@@ -232,6 +253,11 @@ const ListaDeProdutos = (props) => {
               </option>
             ))}
           </select>
+          <div>
+            <button type="button" className="btn btn-success" onClick={() => props.history.push("/ListaDeFornecedores")}>
+              Criar Produto
+            </button>
+          </div>
 
           <Pagination
             color="primary"
@@ -244,6 +270,8 @@ const ListaDeProdutos = (props) => {
             onChange={handlePageChange}
           />
         </div>
+
+        
         
 
 

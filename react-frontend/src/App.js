@@ -22,6 +22,8 @@ import ListaProdutosDoFornecedor from "./componentes/ListaProdutosDoFornecedor";
 import ListaDeMovimentacoes from "./componentes/ListaMovimentacoes";
 import NovaMovimentacao from "./componentes/NovaMovimentacao";
 import Movimentacoes from "./componentes/Movimentacoes";
+import RelatorioSemanal from "./componentes/RelatorioSemanal";
+
 
 //componentes welcome
 import WelcomePage from "./componentes/WelcomePage";
@@ -58,6 +60,11 @@ function App() {
               Movimentacoes
             </Link>
           </li>
+          <li className="nav-item">
+            <Link to={"/RelatorioSemanal"} className="nav-link">
+              Relatorios
+            </Link>
+          </li>
         </div>
       </nav>
       )}
@@ -67,6 +74,7 @@ function App() {
           <Route exact path={["/", "/ListaDeProdutos"]} component={ListaDeProdutos} />
           <Route exact path={["/", "/ListaDeFornecedores"]} component={ListaDeFornecedores} />
           <Route exact path={["/", "/ListaDeMovimentacoes"]} component={ListaDeMovimentacoes} />
+          <Route exact path={["/", "/RelatorioSemanal"]} component={RelatorioSemanal} />
           <Route exact path={["/", "/Produtos/fornecedor/:fornecedor_id"]} component={ListaProdutosDoFornecedor} /> 
           <Route exact path={["/", "/WelcomePage"]} component={WelcomePage} />         
 
