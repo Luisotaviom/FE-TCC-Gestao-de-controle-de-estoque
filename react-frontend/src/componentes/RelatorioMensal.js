@@ -1,29 +1,22 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import Pagination from "@material-ui/lab/Pagination";
-import MovimentacoesDataService from "../services/GerencyServiceMov";
+import RelatorioMensalDataService from "../services/GerencyServiceMov";
 import { useTable } from "react-table";
 import styles from './css.module.css'; // Ajuste o caminho conforme necessário
 
 
-const ListaDeMovimentacoes = (props) => {
-  /**
-   * useState é um Hook do React que permite adicionar estado a componentes de função. 
-   * Neste caso, useState([]) inicializa um estado chamado "users" com um valor inicial de um array vazio []. 
-   * O array vazio é passado como um valor inicial para o estado.
-   */
-  const [movimentacoes, definirMovimentacoes] = useState([]);
-  const [tipoMovimentacao, setTipoMovimentacao] = useState("");
-  const movimentacoesRef = useRef();
+const RelatorioMensal = (props) => {
+  const [relatorioMensal, definirRelatorioMensal] = useState([]);
+  const relatorioMensalRef = useRef();
   const [page, setPage] = useState(1);
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(4);
   const pageSizes = [4, 8, 12];
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+
   
 
 
-  movimentacoesRef.current = movimentacoes;
+  relatorioMensalRef.current = relatorioMensal;
 
 const buscarVariaveisDePaginacao = (page, pageSize, tipo, dataRegistro) => {
   let params = {};
@@ -36,70 +29,24 @@ const buscarVariaveisDePaginacao = (page, pageSize, tipo, dataRegistro) => {
     params["size"] = pageSize;
   }
 
-  if (tipo) {
-    params["tipo"] = tipo;
-  }
-
-  if (dataRegistro && dataRegistro.start && dataRegistro.end) {
-    params["start"] = dataRegistro.start;
-    params["end"] = dataRegistro.end;
-  }
-
   return params;
 };
 
-  const buscarMovimentacoes = () => {
-    const params = buscarVariaveisDePaginacao(page, pageSize, tipoMovimentacao, { start: startDate, end: endDate });
-  
-    if (tipoMovimentacao && startDate && endDate) {
-      MovimentacoesDataService.getDataETipo(params)
+  const buscarRelatorioMensal = () => {
+
+    const params = buscarVariaveisDePaginacao(page, pageSize);
+      RelatorioMensalDataService.getRelatorioMensal(params)
         .then(handleResponse)
         .catch(handleError);
-    }
-    else if (tipoMovimentacao) {
-      MovimentacoesDataService.getTipos(params)
-        .then(handleResponse)
-        .catch(handleError);
-    }
-    else if (startDate && endDate) {
-      MovimentacoesDataService.getData(params)
-        .then(handleResponse)
-        .catch(handleError);
-    }
-    else {
-      MovimentacoesDataService.getAll(params)
-        .then(handleResponse)
-        .catch(handleError);
-    }
+
   };
   
 
-  const openMovimentacoes = useCallback((rowIndex) => {
-    const id = movimentacoesRef.current[rowIndex].id;
-    props.history.push("/Movimentacoes/" + id);
-  }, [props.history, movimentacoesRef]);
-
-  const deleteMovimentacoes = useCallback((rowIndex) => {
-    const id = movimentacoesRef.current[rowIndex].id;
-    MovimentacoesDataService.remove(id)
-      .then((response) => {
-        props.history.push("/Movimentacoes");
-  
-        let novasMovimentacoes = [...movimentacoesRef.current];
-        novasMovimentacoes.splice(rowIndex, 1);
-  
-        definirMovimentacoes(novasMovimentacoes);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  }, [props.history, movimentacoesRef]); 
-
     const handleResponse = (response) => {
-      const movimentacoes = response.data.content;
+      const relatorioMensal = response.data.content;
       const totalPages = response.data.totalPages;
 
-      definirMovimentacoes(movimentacoes);
+      definirRelatorioMensal(relatorioMensal);
       setCount(totalPages);
   };
 
@@ -107,33 +54,18 @@ const buscarVariaveisDePaginacao = (page, pageSize, tipo, dataRegistro) => {
       console.log(error);
   };
 
-  useEffect(buscarMovimentacoes, [page, pageSize, tipoMovimentacao]);
+  useEffect(buscarRelatorioMensal, [page, pageSize]);
 
   const handlePageChange = (event, value) => {
     setPage(parseInt(value, 10)); // Converte para número
   };
   
 
-
   const handlePageSizeChange = (event) => {
     setPageSize(event.target.value);
     setPage(1);
   };
 
-  const handleTipoMovimentacaoChange = (event) => {
-    const valor = event.target.value;
-    const tipoValido = (valor === "E" || valor === "S") ? valor.toUpperCase() : "";
-
-    setTipoMovimentacao(tipoValido);
-  };
-
-  const handleStartDateChange = (event) => {
-    setStartDate(event.target.value);
-  };
-
-  const handleEndDateChange = (event) => {
-      setEndDate(event.target.value);
-  };
 
   const columns = useMemo(
     () => [
@@ -184,25 +116,8 @@ const buscarVariaveisDePaginacao = (page, pageSize, tipo, dataRegistro) => {
         accessor: row => `${row.fornecedor_id} (${row.fornecedorNome})`,
         id: "fornecedor", // Este é um identificador único para a coluna, necessário se você usa uma função para accessor
       },      
-      {
-        Header: "Ações",
-        accessor: "actions",
-        Cell: (props) => {
-          const rowIdx = props.row.id;
-          return (
-            <div className="action-buttons">
-              <button type="button" className="btn btn-warning btn-sm" onClick={() => openMovimentacoes(rowIdx)}>
-                Editar movimentação
-              </button>
-              <button type="button" className="btn btn-danger btn-sm" onClick={() => deleteMovimentacoes(rowIdx)}>
-                Excluir movimentação
-              </button>
-            </div>
-          );
-        },
-      },
     ],
-    [openMovimentacoes, deleteMovimentacoes] // Agora essas funções são estáveis e não mudarão a cada renderização
+    [] 
   );
 
   const {
@@ -213,13 +128,13 @@ const buscarVariaveisDePaginacao = (page, pageSize, tipo, dataRegistro) => {
     prepareRow,
   } = useTable({
     columns,
-    data: movimentacoes,
+    data: relatorioMensal,
   });
 
   return (
     <div className={`${styles.list} row`}>
     <div className="col-md-12">
-      <h2 className={styles.h2}>Lista de movimentacoes</h2>
+      <h2 className={styles.h2}>Lista de relatorioMensal</h2>
       <div className="d-flex justify-content-between mt-3">
         <div>
               <span className="mr-2">Itens por página:</span>
@@ -231,30 +146,6 @@ const buscarVariaveisDePaginacao = (page, pageSize, tipo, dataRegistro) => {
                 ))}
             </select>
             </div>
-          <div>
-            {"Tipo de Movimentação: "}
-            <select onChange={handleTipoMovimentacaoChange} value={tipoMovimentacao}>
-              <option value="">Todos</option>
-              <option value="E">Entrada</option>
-              <option value="S">Saída</option>
-            </select>
-          </div>
-          <div>
-          {"Buscar por data: "}
-          <input
-            type="datetime-local"
-            name="startDate"
-            value={startDate}
-            onChange={handleStartDateChange}
-          />
-            <input
-              type="datetime-local"
-              name="endDate"
-              value={endDate}
-              onChange={handleEndDateChange}
-            />
-            <button onClick={buscarMovimentacoes}>Buscar</button>
-          </div>
         </div>
       
 
@@ -312,11 +203,6 @@ const buscarVariaveisDePaginacao = (page, pageSize, tipo, dataRegistro) => {
               </option>
             ))}
           </select>
-          <div className="mt-3">
-            <button type="button" className="btn btn-success" onClick={() => props.history.push("/NovaMovimentacao")}>
-            Criar Movimentacoes
-            </button>
-          </div>
 
           <Pagination
             color="primary"
@@ -333,4 +219,4 @@ const buscarVariaveisDePaginacao = (page, pageSize, tipo, dataRegistro) => {
   );
 };
 
-export default ListaDeMovimentacoes;
+export default RelatorioMensal;

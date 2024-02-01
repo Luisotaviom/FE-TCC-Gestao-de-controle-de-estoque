@@ -23,6 +23,7 @@ import ListaDeMovimentacoes from "./componentes/ListaMovimentacoes";
 import NovaMovimentacao from "./componentes/NovaMovimentacao";
 import Movimentacoes from "./componentes/Movimentacoes";
 import RelatorioSemanal from "./componentes/RelatorioSemanal";
+import RelatorioMensal from "./componentes/RelatorioMensal";
 
 
 //componentes welcome
@@ -74,6 +75,7 @@ function App() {
           <Route exact path={["/", "/ListaDeProdutos"]} component={ListaDeProdutos} />
           <Route exact path={["/", "/ListaDeFornecedores"]} component={ListaDeFornecedores} />
           <Route exact path={["/", "/ListaDeMovimentacoes"]} component={ListaDeMovimentacoes} />
+          <Route exact path={["/", "/RelatorioMensal"]} component={RelatorioMensal} />
           <Route exact path={["/", "/RelatorioSemanal"]} component={RelatorioSemanal} />
           <Route exact path={["/", "/Produtos/fornecedor/:fornecedor_id"]} component={ListaProdutosDoFornecedor} /> 
           <Route exact path={["/", "/WelcomePage"]} component={WelcomePage} />         
