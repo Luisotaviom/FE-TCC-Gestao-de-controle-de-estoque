@@ -1,0 +1,17 @@
+/* RelatorioSemanal.module.css */
+.table {
+    width: 100%;
+    border-collapse: collapse; /* Essencial para bordas contínuas */
+  }
+  
+  .table th,
+  .table td {
+    border: 2px solid black; /* Aplica bordas pretas */
+    padding: 8px; /* Espaçamento interno nas células */
+    text-align: left; /* Alinhamento do texto */
+  }
+  
+  .table th {
+    background-color: #f2f2f2; /* Cor de fundo para cabeçalhos */
+  }
+  

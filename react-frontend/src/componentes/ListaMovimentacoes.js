@@ -20,12 +20,12 @@ const ListaDeMovimentacoes = (props) => {
   const pageSizes = [4, 8, 12];
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [categoriaLista, setCategoriaLista] = useState("");
   
-
 
   movimentacoesRef.current = movimentacoes;
 
-const buscarVariaveisDePaginacao = (page, pageSize, tipo, dataRegistro) => {
+const buscarVariaveisDePaginacao = (page, pageSize, tipo, categoria, dataRegistro) => {
   let params = {};
 
   if (page) {
@@ -34,6 +34,10 @@ const buscarVariaveisDePaginacao = (page, pageSize, tipo, dataRegistro) => {
 
   if (pageSize) {
     params["size"] = pageSize;
+  }
+
+  if (categoria) {
+    params["categoria"] = categoria;
   }
 
   if (tipo) {
@@ -113,7 +117,9 @@ const buscarVariaveisDePaginacao = (page, pageSize, tipo, dataRegistro) => {
     setPage(parseInt(value, 10)); // Converte para número
   };
   
-
+  const handleCategoriaMovimentacaoChange = (event) => {
+    setCategoriaLista(event.target.value);
+  };
 
   const handlePageSizeChange = (event) => {
     setPageSize(event.target.value);
@@ -158,6 +164,10 @@ const buscarVariaveisDePaginacao = (page, pageSize, tipo, dataRegistro) => {
       {
         Header: "Tipo",
         accessor: "tipo",
+      },
+      {
+        Header: "Categoria",
+        accessor: "categoria",
       },
       {
         Header: "Data de movimentação",
@@ -237,6 +247,14 @@ const buscarVariaveisDePaginacao = (page, pageSize, tipo, dataRegistro) => {
               <option value="">Todos</option>
               <option value="E">Entrada</option>
               <option value="S">Saída</option>
+            </select>
+          </div>
+          <div>
+            {"Categoria: "}
+            <select onChange={handleTipoMovimentacaoChange} value={categoriaLista}>
+              <option value="">Todos</option>
+              <option value="Gás">Gás</option>
+              <option value="Água">Água</option>
             </select>
           </div>
           <div>

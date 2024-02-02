@@ -88,16 +88,20 @@ const CriarProduto = (props) => {
 
           <div className="form-group">
             <label htmlFor="categoria">Categoria</label>
-            <input
-              type="text"
+            <select
               className="form-control"
               id="categoria"
               required
               value={produto.categoria}
               onChange={executarValorAlterado}
               name="categoria"
-            />
+            >
+           <option value="">Selecione</option>
+              <option value="Gás">Gás</option>
+              <option value="Água">Água</option>
+            </select>
           </div>
+          
           <div className="form-group">
             <label htmlFor="ativo">Ativo</label>
             <input

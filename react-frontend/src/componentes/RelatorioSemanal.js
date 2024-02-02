@@ -1,90 +1,85 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
-import Pagination from "@material-ui/lab/Pagination";
 import RelatorioSemanalDataService from "../services/GerencyServiceMov";
 import { useTable } from "react-table";
-import styles from './css.module.css'; // Ajuste o caminho conforme necessário
 
 
 const RelatorioSemanal = (props) => {
-  /**
-   * useState é um Hook do React que permite adicionar estado a componentes de função. 
-   * Neste caso, useState([]) inicializa um estado chamado "users" com um valor inicial de um array vazio []. 
-   * O array vazio é passado como um valor inicial para o estado.
-   */
   const [relatorioSemanal, definirRelatorioSemanal] = useState([]);
   const [tipoRelatorio, setTipoRelatorio] = useState("");
+  const [categoriaRelatorio, setCategoriaRelatorio] = useState("");
   const relatorioSemanalRef = useRef();
-  const [page, setPage] = useState(1);
   const [count, setCount] = useState(0);
-  const [pageSize, setPageSize] = useState(4);
-  const pageSizes = [4, 8, 12];
-
 
   relatorioSemanalRef.current = relatorioSemanal;
 
-const buscarVariaveisDePaginacao = (page, pageSize, tipo) => {
-  let params = {};
+  const buscarRelatorioSemanal = () => {
+    const params = {};
+    if (tipoRelatorio) {
+      params.tipo = tipoRelatorio;
+    }
+    if (categoriaRelatorio) {
+      params.categoria = categoriaRelatorio;
+    }
 
-  if (page) {
-    params["page"] = page - 1;
-  }
+  RelatorioSemanalDataService.getRelatorioSemanal(params)
+    .then(handleResponse)
+    .catch(handleError);
 
-  if (pageSize) {
-    params["size"] = pageSize;
-  }
-
-  if (tipo) {
-    params["tipo"] = tipo;
-  }
-
-  return params;
-};
-
-const buscarRelatorioSemanal = () => {
-  const params = buscarVariaveisDePaginacao(page, pageSize, tipoRelatorio);
-
-  if (tipoRelatorio) { 
-    RelatorioSemanalDataService.getRelatorioSemanal(params)
-      .then(handleResponse)
-      .catch(handleError);
-  } else { 
     RelatorioSemanalDataService.getTiposRelatorios(params)
-      .then(handleResponse)
-      .catch(handleError);
-  }
+    .then(handleResponse)
+    .catch(handleError);
+    
 };
 
-    const handleResponse = (response) => {
-      const relatorioSemanal = response.data.content;
-      const totalPages = response.data.totalPages;
+const handleResponse = (response) => {
+  const { content, totalPages } = response.data;
+  definirRelatorioSemanal(content);
+  setCount(totalPages);
+};
 
-      definirRelatorioSemanal(relatorioSemanal);
-      setCount(totalPages);
-  };
+const handleError = (error) => {
+  console.log(error);
+};
 
-  const handleError = (error) => {
-      console.log(error);
-  };
+useEffect(buscarRelatorioSemanal, [tipoRelatorio]);
 
-  useEffect(buscarRelatorioSemanal, [page, pageSize, tipoRelatorio]);
+const handleTipoMovimentacaoChange = (event) => {
+  setTipoRelatorio(event.target.value);
+};
 
-  const handlePageChange = (event, value) => {
-    setPage(parseInt(value, 10)); // Converte para número
-  };
+const handleCategoriaMovimentacaoChange = (event) => {
+  setCategoriaRelatorio(event.target.value);
+};
 
-  const handleTipoMovimentacaoChange = (event) => {
-    const valor = event.target.value;
-    const tipoValido = (valor === "E" || valor === "S") ? valor.toUpperCase() : "";
-
-    setTipoRelatorio(tipoValido);
+  const tableStyle = {
+    width: '100%',
+    borderCollapse: 'collapse',
   };
   
-
-  const handlePageSizeChange = (event) => {
-    setPageSize(event.target.value);
-    setPage(1);
+  const cellStyle = {
+    border: '2px solid black',
+    padding: '8px',
+    textAlign: 'left',
+  };
+  
+  const headerCellStyle = {
+    ...cellStyle,
+    backgroundColor: '#f2f2f2',
   };
 
+  const totais = relatorioSemanal.reduce((acc, item) => {
+    // Converta para número com segurança, assumindo que a entrada pode ser uma string
+    const quantidade = Number(item.quantidade);
+    const valor = Number(item.valor);
+    if (item.tipo === 'E') {
+      acc.totalQuantidade += quantidade; // Soma quantidade para entradas
+      acc.totalValor -= valor;           // Subtrai valor para entradas
+    } else if (item.tipo === 'S') {
+      acc.totalQuantidade -= quantidade; // Subtrai quantidade para saídas
+      acc.totalValor += valor;           // Soma valor para saídas
+    }
+    return acc;
+  }, { totalQuantidade: 0, totalValor: 0 });
 
   const columns = useMemo(
     () => [
@@ -109,6 +104,10 @@ const buscarRelatorioSemanal = () => {
       {
         Header: "Tipo",
         accessor: "tipo",
+      },
+      {
+        Header: "Categoria",
+        accessor: "categoria",
       },
       {
         Header: "Data de movimentação",
@@ -150,97 +149,62 @@ const buscarRelatorioSemanal = () => {
   });
 
   return (
-    <div className={`${styles.list} row`}>
-    <div className="col-md-12">
-      <h2 className={styles.h2}>Lista de relatorioSemanal</h2>
-      <div className="d-flex justify-content-between mt-3">
-        <div>
-              <span className="mr-2">Itens por página:</span>
-              <select className="custom-select" style={{ width: 'auto' }} onChange={handlePageSizeChange} value={pageSize}>
-                {pageSizes.map((size) => (
-                  <option key={size} value={size}>
-                    {size}
-                  </option>
-                ))}
-            </select>
-            </div>
-            <div>
-            {"Tipo de relatorio: "}
+    <div className="row">
+      <div className="col-md-12">
+        <h2>Lista de relatorioSemanal</h2>
+        <div className="d-flex justify-content-between mt-3">
+          <div>
+            {"Tipo: "}
             <select onChange={handleTipoMovimentacaoChange} value={tipoRelatorio}>
               <option value="">Todos</option>
               <option value="E">Entrada</option>
               <option value="S">Saída</option>
             </select>
           </div>
+          <div>
+            {"Categoria: "}
+            <select onChange={handleTipoMovimentacaoChange} value={categoriaRelatorio}>
+              <option value="">Todos</option>
+              <option value="Gás">Gás</option>
+              <option value="Água">Água</option>
+            </select>
+          </div>
         </div>
-      
+      </div>
 
-          <Pagination
-            color="primary"
-            className="my-3"
-            count={count}
-            page={page}
-            siblingCount={1}
-            boundaryCount={1}
-            variant="outlined"
-            onChange={handlePageChange}
-          />
-        </div>
-
-        <table
-          {...getTableProps()}
-          className={`table ${styles.listTable}`}
-        >
-          <thead>
-            {headerGroups.map((headerGroup) => (
-              <tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((column) => (
-                  <th {...column.getHeaderProps()}>
-                    {column.render("Header")}
-                  </th>
-
-
-                ))}
-              </tr>
-            ))}
+        <table {...getTableProps()} style={tableStyle}>
+        <thead>
+          {headerGroups.map((headerGroup) => (
+            <tr {...headerGroup.getHeaderGroupProps()}>
+              {headerGroup.headers.map((column) => (
+                <th {...column.getHeaderProps()} style={headerCellStyle}>
+                  {column.render("Header")}
+                </th>
+              ))}
+            </tr>
+          ))}
           </thead>
           <tbody {...getTableBodyProps()}>
-            {rows.map((row, i) => {
-              prepareRow(row);
-              return (
-                <tr {...row.getRowProps()}>
-                  {row.cells.map((cell) => {
-                    return (
-                      <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
-                    );
-                  })}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-
-        <div className="mt-3">
-          {"Itens por página: "}
-          <select onChange={handlePageSizeChange} value={pageSize}>
-            {pageSizes.map((size) => (
-              <option key={size} value={size}>
-                {size}
-              </option>
-            ))}
-          </select>
-
-          <Pagination
-            color="primary"
-            className="my-3"
-            count={count}
-            page={page}
-            siblingCount={1}
-            boundaryCount={1}
-            variant="outlined"
-            onChange={handlePageChange}
-          />
-        </div>
+          {rows.map((row) => {
+            prepareRow(row);
+            return (
+              <tr {...row.getRowProps()}>
+                {row.cells.map((cell) => (
+                  <td {...cell.getCellProps()} style={cellStyle}>
+                    {cell.render("Cell")}
+                  </td>
+                ))}
+              </tr>
+            );
+          })}
+          <tr>
+            <td colSpan="2" style={cellStyle}>Total de produtos:</td>
+            <td style={cellStyle}>{totais.totalQuantidade}</td>
+            <td style={cellStyle}>{`R$ ${totais.totalValor.toFixed(2).replace('.', ',')}`}</td>
+            <td colSpan="3" style={cellStyle}></td>
+          </tr>
+        </tbody>
+      </table>
       </div>
   );
 };
