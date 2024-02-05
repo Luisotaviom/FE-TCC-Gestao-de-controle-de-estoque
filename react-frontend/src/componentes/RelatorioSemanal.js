@@ -20,36 +20,38 @@ const RelatorioSemanal = (props) => {
     if (categoriaRelatorio) {
       params.categoria = categoriaRelatorio;
     }
+  
+    definirRelatorioSemanal([]);
+  
+    RelatorioSemanalDataService.getRelatorioSemanal(params)
+      .then(handleResponse)
+      .catch(handleError);
+  };
+  
+  
+  const handleResponse = (response) => {
+    if (response.data && response.data.content) {
+      definirRelatorioSemanal(response.data.content);
+    } else {
+      definirRelatorioSemanal([]);
+    }
+  };
+  
+  const handleError = (error) => {
+    console.error('Erro ao buscar relatório semanal:', error);
+  };
+  
+  useEffect(buscarRelatorioSemanal, [tipoRelatorio, categoriaRelatorio]);
+  
 
-  RelatorioSemanalDataService.getRelatorioSemanal(params)
-    .then(handleResponse)
-    .catch(handleError);
-
-    RelatorioSemanalDataService.getTiposRelatorios(params)
-    .then(handleResponse)
-    .catch(handleError);
-    
-};
-
-const handleResponse = (response) => {
-  const { content, totalPages } = response.data;
-  definirRelatorioSemanal(content);
-  setCount(totalPages);
-};
-
-const handleError = (error) => {
-  console.log(error);
-};
-
-useEffect(buscarRelatorioSemanal, [tipoRelatorio]);
-
-const handleTipoMovimentacaoChange = (event) => {
-  setTipoRelatorio(event.target.value);
-};
-
-const handleCategoriaMovimentacaoChange = (event) => {
-  setCategoriaRelatorio(event.target.value);
-};
+  const handleTipoMovimentacaoChange = (event) => {
+    setTipoRelatorio(event.target.value);
+  };
+  
+  const handleCategoriaMovimentacaoChange = (event) => {
+    setCategoriaRelatorio(event.target.value);
+  };
+  
 
   const tableStyle = {
     width: '100%',
@@ -163,7 +165,7 @@ const handleCategoriaMovimentacaoChange = (event) => {
           </div>
           <div>
             {"Categoria: "}
-            <select onChange={handleTipoMovimentacaoChange} value={categoriaRelatorio}>
+            <select onChange={handleCategoriaMovimentacaoChange} value={categoriaRelatorio}>
               <option value="">Todos</option>
               <option value="Gás">Gás</option>
               <option value="Água">Água</option>

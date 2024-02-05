@@ -1,71 +1,81 @@
-import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
-import Pagination from "@material-ui/lab/Pagination";
-import RelatorioMensalDataService from "../services/GerencyServiceMov";
+import React, { useState, useEffect, useMemo, useRef } from "react";
+import RelatoriomensalDataService from "../services/GerencyServiceMov";
 import { useTable } from "react-table";
-import styles from './css.module.css'; // Ajuste o caminho conforme necessário
 
 
-const RelatorioMensal = (props) => {
-  const [relatorioMensal, definirRelatorioMensal] = useState([]);
-  const relatorioMensalRef = useRef();
-  const [page, setPage] = useState(1);
+const Relatoriomensal = (props) => {
+  const [Relatoriomensal, definirRelatoriomensal] = useState([]);
+  const [tipoRelatorio, setTipoRelatorio] = useState("");
+  const [categoriaRelatorio, setCategoriaRelatorio] = useState("");
+  const RelatoriomensalRef = useRef();
   const [count, setCount] = useState(0);
-  const [pageSize, setPageSize] = useState(4);
-  const pageSizes = [4, 8, 12];
 
-  
-
-
-  relatorioMensalRef.current = relatorioMensal;
-
-const buscarVariaveisDePaginacao = (page, pageSize, tipo, dataRegistro) => {
-  let params = {};
-
-  if (page) {
-    params["page"] = page - 1;
-  }
-
-  if (pageSize) {
-    params["size"] = pageSize;
-  }
-
-  return params;
-};
+  RelatoriomensalRef.current = Relatoriomensal;
 
   const buscarRelatorioMensal = () => {
-
-    const params = buscarVariaveisDePaginacao(page, pageSize);
-      RelatorioMensalDataService.getRelatorioMensal(params)
-        .then(handleResponse)
-        .catch(handleError);
-
+    const params = {
+      tipo: tipoRelatorio,
+      categoria: categoriaRelatorio
+    };
+    definirRelatoriomensal([]);
+  
+    RelatoriomensalDataService.getRelatorioMensal(params)
+      .then(handleResponse)
+      .catch(handleError);
   };
   
-
-    const handleResponse = (response) => {
-      const relatorioMensal = response.data.content;
-      const totalPages = response.data.totalPages;
-
-      definirRelatorioMensal(relatorioMensal);
-      setCount(totalPages);
+  const handleResponse = (response) => {
+    if (response.data && response.data.content) {
+      definirRelatoriomensal(response.data.content);
+    } else {
+      definirRelatoriomensal([]);
+    }
   };
-
+  
   const handleError = (error) => {
-      console.log(error);
-  };
-
-  useEffect(buscarRelatorioMensal, [page, pageSize]);
-
-  const handlePageChange = (event, value) => {
-    setPage(parseInt(value, 10)); // Converte para número
+    console.error('Erro ao buscar relatório mensal:', error);
   };
   
+  useEffect(buscarRelatorioMensal, [tipoRelatorio, categoriaRelatorio]);
+  
 
-  const handlePageSizeChange = (event) => {
-    setPageSize(event.target.value);
-    setPage(1);
+const handleTipoMovimentacaoChange = (event) => {
+  setTipoRelatorio(event.target.value);
+};
+
+const handleCategoriaMovimentacaoChange = (event) => {
+  setCategoriaRelatorio(event.target.value);
+};
+
+  const tableStyle = {
+    width: '100%',
+    borderCollapse: 'collapse',
+  };
+  
+  const cellStyle = {
+    border: '2px solid black',
+    padding: '8px',
+    textAlign: 'left',
+  };
+  
+  const headerCellStyle = {
+    ...cellStyle,
+    backgroundColor: '#f2f2f2',
   };
 
+  const totais = Relatoriomensal.reduce((acc, item) => {
+    // Converta para número com segurança, assumindo que a entrada pode ser uma string
+    const quantidade = Number(item.quantidade);
+    const valor = Number(item.valor);
+    if (item.tipo === 'E') {
+      acc.totalQuantidade += quantidade; // Soma quantidade para entradas
+      acc.totalValor -= valor;           // Subtrai valor para entradas
+    } else if (item.tipo === 'S') {
+      acc.totalQuantidade -= quantidade; // Subtrai quantidade para saídas
+      acc.totalValor += valor;           // Soma valor para saídas
+    }
+    return acc;
+  }, { totalQuantidade: 0, totalValor: 0 });
 
   const columns = useMemo(
     () => [
@@ -92,6 +102,10 @@ const buscarVariaveisDePaginacao = (page, pageSize, tipo, dataRegistro) => {
         accessor: "tipo",
       },
       {
+        Header: "Categoria",
+        accessor: "categoria",
+      },
+      {
         Header: "Data de movimentação",
         accessor: "dataRegistro",
         Cell: ({ value }) => {
@@ -115,11 +129,10 @@ const buscarVariaveisDePaginacao = (page, pageSize, tipo, dataRegistro) => {
         Header: "Fornecedor",
         accessor: row => `${row.fornecedor_id} (${row.fornecedorNome})`,
         id: "fornecedor", // Este é um identificador único para a coluna, necessário se você usa uma função para accessor
-      },      
+      },   
     ],
     [] 
   );
-
   const {
     getTableProps,
     getTableBodyProps,
@@ -128,95 +141,68 @@ const buscarVariaveisDePaginacao = (page, pageSize, tipo, dataRegistro) => {
     prepareRow,
   } = useTable({
     columns,
-    data: relatorioMensal,
+    data: Relatoriomensal,
   });
 
   return (
-    <div className={`${styles.list} row`}>
-    <div className="col-md-12">
-      <h2 className={styles.h2}>Lista de relatorioMensal</h2>
-      <div className="d-flex justify-content-between mt-3">
-        <div>
-              <span className="mr-2">Itens por página:</span>
-              <select className="custom-select" style={{ width: 'auto' }} onChange={handlePageSizeChange} value={pageSize}>
-                {pageSizes.map((size) => (
-                  <option key={size} value={size}>
-                    {size}
-                  </option>
-                ))}
+    <div className="row">
+      <div className="col-md-12">
+        <h2>Lista de Relatoriomensal</h2>
+        <div className="d-flex justify-content-between mt-3">
+          <div>
+            {"Tipo: "}
+            <select onChange={handleTipoMovimentacaoChange} value={tipoRelatorio}>
+              <option value="">Todos</option>
+              <option value="E">Entrada</option>
+              <option value="S">Saída</option>
             </select>
-            </div>
+          </div>
+          <div>
+            {"Categoria: "}
+            <select onChange={handleCategoriaMovimentacaoChange} value={categoriaRelatorio}>
+              <option value="">Todos</option>
+              <option value="Gás">Gás</option>
+              <option value="Água">Água</option>
+            </select>
+          </div>
         </div>
-      
+      </div>
 
-          <Pagination
-            color="primary"
-            className="my-3"
-            count={count}
-            page={page}
-            siblingCount={1}
-            boundaryCount={1}
-            variant="outlined"
-            onChange={handlePageChange}
-          />
-        </div>
-
-        <table
-          {...getTableProps()}
-          className={`table ${styles.listTable}`}
-        >
-          <thead>
-            {headerGroups.map((headerGroup) => (
-              <tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((column) => (
-                  <th {...column.getHeaderProps()}>
-                    {column.render("Header")}
-                  </th>
-
-
-                ))}
-              </tr>
-            ))}
+        <table {...getTableProps()} style={tableStyle}>
+        <thead>
+          {headerGroups.map((headerGroup) => (
+            <tr {...headerGroup.getHeaderGroupProps()}>
+              {headerGroup.headers.map((column) => (
+                <th {...column.getHeaderProps()} style={headerCellStyle}>
+                  {column.render("Header")}
+                </th>
+              ))}
+            </tr>
+          ))}
           </thead>
           <tbody {...getTableBodyProps()}>
-            {rows.map((row, i) => {
-              prepareRow(row);
-              return (
-                <tr {...row.getRowProps()}>
-                  {row.cells.map((cell) => {
-                    return (
-                      <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
-                    );
-                  })}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-
-        <div className="mt-3">
-          {"Itens por página: "}
-          <select onChange={handlePageSizeChange} value={pageSize}>
-            {pageSizes.map((size) => (
-              <option key={size} value={size}>
-                {size}
-              </option>
-            ))}
-          </select>
-
-          <Pagination
-            color="primary"
-            className="my-3"
-            count={count}
-            page={page}
-            siblingCount={1}
-            boundaryCount={1}
-            variant="outlined"
-            onChange={handlePageChange}
-          />
-        </div>
+          {rows.map((row) => {
+            prepareRow(row);
+            return (
+              <tr {...row.getRowProps()}>
+                {row.cells.map((cell) => (
+                  <td {...cell.getCellProps()} style={cellStyle}>
+                    {cell.render("Cell")}
+                  </td>
+                ))}
+              </tr>
+            );
+          })}
+          <tr>
+            <td colSpan="2" style={cellStyle}>Total de produtos:</td>
+            <td style={cellStyle}>{totais.totalQuantidade}</td>
+            <td style={cellStyle}>{`R$ ${totais.totalValor.toFixed(2).replace('.', ',')}`}</td>
+            <td colSpan="3" style={cellStyle}></td>
+          </tr>
+        </tbody>
+      </table>
       </div>
   );
 };
 
-export default RelatorioMensal;
+export default Relatoriomensal;

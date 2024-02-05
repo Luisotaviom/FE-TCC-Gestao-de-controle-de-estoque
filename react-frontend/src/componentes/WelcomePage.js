@@ -1,14 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import styles from './WelcomePage.module.css'; // Certifique-se de ter o arquivo CSS correspondente
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; // Usando FontAwesome para ícones
+import styles from './WelcomePage.module.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; 
 import { faWarehouse, faTruckMoving, faList, faShoppingBasket } from '@fortawesome/free-solid-svg-icons';
 
 const WelcomePage = () => {
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        {/* Incluir um logo ou título do sistema aqui */}
         <h1>Sistema de Controle de Estoque</h1>
       </header>
 
@@ -33,17 +32,22 @@ const WelcomePage = () => {
               <FontAwesomeIcon icon={faList} /> Lista de Fornecedores
             </Link>
             <Link className={styles.card} to="/ListaDeMovimentacoes">
-              <FontAwesomeIcon icon={faShoppingBasket} /> Lista de Movimentações
+              <FontAwesomeIcon icon={faList} /> Lista de Movimentações
             </Link>
             <Link className={styles.card} to="/ListaDeFornecedores">
               <FontAwesomeIcon icon={faShoppingBasket} /> Criar Produto
+            </Link>
+            <Link className={styles.card} to="/RelatorioSemanal">
+              <FontAwesomeIcon icon="fa-solid fa-file" />  Relatorio semanal
+              </Link>
+            <Link className={styles.card} to="/RelatorioMensal">
+              <FontAwesomeIcon icon="fa-solid fa-file" />  Relatorio mensal
             </Link>
           </div>
         </div>
       </main>
 
       <footer className={styles.footer}>
-        {/* Informações de rodapé, como direitos autorais, links de ajuda, etc. */}
         <p>© 2024 Controle de Estoque</p>
       </footer>
     </div>
