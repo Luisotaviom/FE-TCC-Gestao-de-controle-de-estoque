@@ -31,6 +31,9 @@ import WelcomePage from "./componentes/WelcomePage";
 
 
 
+
+
+
 function App() {
   const location = useLocation(); // Hook para obter a rota atual
 
@@ -61,11 +64,6 @@ function App() {
               Movimentacoes
             </Link>
           </li>
-          <li className="nav-item">
-            <Link to={"/RelatorioSemanal"} className="nav-link">
-              Relatorios
-            </Link>
-          </li>
         </div>
       </nav>
       )}
@@ -79,6 +77,7 @@ function App() {
           <Route exact path={["/", "/RelatorioSemanal"]} component={RelatorioSemanal} />
           <Route exact path={["/", "/Produtos/fornecedor/:fornecedor_id"]} component={ListaProdutosDoFornecedor} /> 
           <Route exact path={["/", "/WelcomePage"]} component={WelcomePage} />         
+
 
           <Route exact path="/NovoFornecedor" component={NovoFornecedor} />
           <Route path="/Produtos/fornecedor/:id/produto" component={CriarProduto} />

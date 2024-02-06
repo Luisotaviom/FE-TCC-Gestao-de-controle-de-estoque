@@ -8,7 +8,6 @@ const RelatorioSemanal = (props) => {
   const [tipoRelatorio, setTipoRelatorio] = useState("");
   const [categoriaRelatorio, setCategoriaRelatorio] = useState("");
   const relatorioSemanalRef = useRef();
-  const [count, setCount] = useState(0);
 
   relatorioSemanalRef.current = relatorioSemanal;
 
@@ -70,18 +69,29 @@ const RelatorioSemanal = (props) => {
   };
 
   const totais = relatorioSemanal.reduce((acc, item) => {
-    // Converta para número com segurança, assumindo que a entrada pode ser uma string
     const quantidade = Number(item.quantidade);
     const valor = Number(item.valor);
-    if (item.tipo === 'E') {
-      acc.totalQuantidade += quantidade; // Soma quantidade para entradas
-      acc.totalValor -= valor;           // Subtrai valor para entradas
-    } else if (item.tipo === 'S') {
-      acc.totalQuantidade -= quantidade; // Subtrai quantidade para saídas
-      acc.totalValor += valor;           // Soma valor para saídas
+    
+    // Se estiver visualizando todos os tipos, calcula a diferença
+    if (tipoRelatorio === "") {
+      if (item.tipo === 'E') {
+        acc.totalQuantidade += quantidade;
+        acc.totalValor -= valor;
+      } else if (item.tipo === 'S') {
+        acc.totalQuantidade -= quantidade;
+        acc.totalValor += valor;
+      }
     }
+    // Se estiver visualizando apenas entradas ou apenas saídas, soma os valores
+    else {
+      if (item.tipo === tipoRelatorio) {
+        acc.totalQuantidade += quantidade;
+        acc.totalValor += valor;
+      }
+    }
+    
     return acc;
-  }, { totalQuantidade: 0, totalValor: 0 });
+}, { totalQuantidade: 0, totalValor: 0 });
 
   const columns = useMemo(
     () => [
@@ -153,7 +163,7 @@ const RelatorioSemanal = (props) => {
   return (
     <div className="row">
       <div className="col-md-12">
-        <h2>Lista de relatorioSemanal</h2>
+        <h2>Relatorio Semanal</h2>
         <div className="d-flex justify-content-between mt-3">
           <div>
             {"Tipo: "}
@@ -205,6 +215,9 @@ const RelatorioSemanal = (props) => {
             <td style={cellStyle}>{`R$ ${totais.totalValor.toFixed(2).replace('.', ',')}`}</td>
             <td colSpan="3" style={cellStyle}></td>
           </tr>
+          <button type="button" className="btn btn-primary" onClick={() => props.history.push("/RelatorioMensal")}>
+              Relatorio Mensal
+            </button>
         </tbody>
       </table>
       </div>

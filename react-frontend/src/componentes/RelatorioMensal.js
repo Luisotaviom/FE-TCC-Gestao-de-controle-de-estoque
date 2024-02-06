@@ -1,51 +1,57 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
-import RelatoriomensalDataService from "../services/GerencyServiceMov";
+import RelatorioMensalDataService from "../services/GerencyServiceMov";
 import { useTable } from "react-table";
 
 
-const Relatoriomensal = (props) => {
-  const [Relatoriomensal, definirRelatoriomensal] = useState([]);
+
+const RelatorioMensal = (props) => {
+  const [RelatorioMensal, definirRelatorioMensal] = useState([]);
   const [tipoRelatorio, setTipoRelatorio] = useState("");
   const [categoriaRelatorio, setCategoriaRelatorio] = useState("");
-  const RelatoriomensalRef = useRef();
-  const [count, setCount] = useState(0);
+  const RelatorioMensalRef = useRef();
 
-  RelatoriomensalRef.current = Relatoriomensal;
+  RelatorioMensalRef.current = RelatorioMensal;
 
   const buscarRelatorioMensal = () => {
-    const params = {
-      tipo: tipoRelatorio,
-      categoria: categoriaRelatorio
-    };
-    definirRelatoriomensal([]);
+    const params = {};
+    if (tipoRelatorio) {
+      params.tipo = tipoRelatorio;
+    }
+    if (categoriaRelatorio) {
+      params.categoria = categoriaRelatorio;
+    }
   
-    RelatoriomensalDataService.getRelatorioMensal(params)
+    definirRelatorioMensal([]);
+  
+    RelatorioMensalDataService.getRelatorioMensal(params)
       .then(handleResponse)
       .catch(handleError);
   };
   
+  
   const handleResponse = (response) => {
     if (response.data && response.data.content) {
-      definirRelatoriomensal(response.data.content);
+      definirRelatorioMensal(response.data.content);
     } else {
-      definirRelatoriomensal([]);
+      definirRelatorioMensal([]);
     }
   };
   
   const handleError = (error) => {
-    console.error('Erro ao buscar relatório mensal:', error);
+    console.error('Erro ao buscar relatório semanal:', error);
   };
   
   useEffect(buscarRelatorioMensal, [tipoRelatorio, categoriaRelatorio]);
   
 
-const handleTipoMovimentacaoChange = (event) => {
-  setTipoRelatorio(event.target.value);
-};
-
-const handleCategoriaMovimentacaoChange = (event) => {
-  setCategoriaRelatorio(event.target.value);
-};
+  const handleTipoMovimentacaoChange = (event) => {
+    setTipoRelatorio(event.target.value);
+  };
+  
+  const handleCategoriaMovimentacaoChange = (event) => {
+    setCategoriaRelatorio(event.target.value);
+  };
+  
 
   const tableStyle = {
     width: '100%',
@@ -63,19 +69,33 @@ const handleCategoriaMovimentacaoChange = (event) => {
     backgroundColor: '#f2f2f2',
   };
 
-  const totais = Relatoriomensal.reduce((acc, item) => {
-    // Converta para número com segurança, assumindo que a entrada pode ser uma string
+  const totais = RelatorioMensal.reduce((acc, item) => {
     const quantidade = Number(item.quantidade);
     const valor = Number(item.valor);
-    if (item.tipo === 'E') {
-      acc.totalQuantidade += quantidade; // Soma quantidade para entradas
-      acc.totalValor -= valor;           // Subtrai valor para entradas
-    } else if (item.tipo === 'S') {
-      acc.totalQuantidade -= quantidade; // Subtrai quantidade para saídas
-      acc.totalValor += valor;           // Soma valor para saídas
+    
+    // Se estiver visualizando todos os tipos, calcula a diferença
+    if (tipoRelatorio === "") {
+      if (item.tipo === 'E') {
+        acc.totalQuantidade += quantidade;
+        acc.totalValor -= valor;
+      } else if (item.tipo === 'S') {
+        acc.totalQuantidade -= quantidade;
+        acc.totalValor += valor;
+      }
     }
+    // Se estiver visualizando apenas entradas ou apenas saídas, soma os valores
+    else {
+      if (item.tipo === tipoRelatorio) {
+        acc.totalQuantidade += quantidade;
+        acc.totalValor += valor;
+      }
+    }
+    
     return acc;
-  }, { totalQuantidade: 0, totalValor: 0 });
+}, { totalQuantidade: 0, totalValor: 0 });
+
+
+
 
   const columns = useMemo(
     () => [
@@ -141,13 +161,13 @@ const handleCategoriaMovimentacaoChange = (event) => {
     prepareRow,
   } = useTable({
     columns,
-    data: Relatoriomensal,
+    data: RelatorioMensal,
   });
 
   return (
     <div className="row">
       <div className="col-md-12">
-        <h2>Lista de Relatoriomensal</h2>
+        <h2>Relatorio Mensal</h2>
         <div className="d-flex justify-content-between mt-3">
           <div>
             {"Tipo: "}
@@ -199,10 +219,13 @@ const handleCategoriaMovimentacaoChange = (event) => {
             <td style={cellStyle}>{`R$ ${totais.totalValor.toFixed(2).replace('.', ',')}`}</td>
             <td colSpan="3" style={cellStyle}></td>
           </tr>
+          <button type="button" className="btn btn-primary" onClick={() => props.history.push("/RelatorioSemanal")}>
+              Relatorio Semanal
+            </button>
         </tbody>
       </table>
       </div>
   );
 };
 
-export default Relatoriomensal;
+export default RelatorioMensal;
