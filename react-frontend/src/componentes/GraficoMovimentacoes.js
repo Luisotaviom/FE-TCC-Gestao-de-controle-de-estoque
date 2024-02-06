@@ -34,7 +34,7 @@ const GraficoMovimentacoes = ({ movimentacoes }) => {
         datasets: [
           {
             label: 'Valor das Movimentações',
-            data: movimentacoes.map(mov => mov.quantidade),
+            data: movimentacoes.map(mov => mov.valor),
             fill: false,
             borderColor: 'rgba(75,192,192,1)',
             backgroundColor: 'rgba(75,192,192,0.2)',

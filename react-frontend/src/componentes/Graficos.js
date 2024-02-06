@@ -26,119 +26,100 @@ ChartJS.register(
 );
 
 const Graficos = () => {
-  const [movimentacoes, setMovimentacoes] = useState([]);
-  let isMounted = true;
-
-  useEffect(() => {
-    const buscarMovimentacoes = async () => {
-      try {
-        const response = await axios.get('http://localhost:8080/Movimentacoes');
-        console.log(response.data); // Isso deve mostrar os dados recebidos no console
-        if (isMounted) {
-          setMovimentacoes(response.data.content);
+    const [movimentacoes, setMovimentacoes] = useState([]);
+    let isMounted = true;
+  
+    useEffect(() => {
+      const buscarMovimentacoes = async () => {
+        try {
+          const response = await axios.get('http://localhost:8080/Movimentacoes');
+          if (isMounted) {
+            setMovimentacoes(response.data.content);
+          }
+        } catch (error) {
+          console.error('Houve um erro ao buscar as movimentações:', error);
         }
-      } catch (error) {
-        console.error('Houve um erro ao buscar as movimentações:', error);
-      }
+      };
+    
+      buscarMovimentacoes();
+      return () => {
+        isMounted = false;
+      };
+    }, []);
+  
+    // Extrair datas e valores das entradas e saídas
+    const datasEntradas = movimentacoes
+      .filter(mov => mov.tipo === 'E')
+      .map(mov => new Date(mov.dataRegistro).toISOString().slice(0, 10));
+  
+    const valoresEntradas = movimentacoes
+      .filter(mov => mov.tipo === 'E')
+      .map(mov => parseFloat(mov.valor));
+  
+    const datasSaidas = movimentacoes
+      .filter(mov => mov.tipo === 'S')
+      .map(mov => new Date(mov.dataRegistro).toISOString().slice(0, 10));
+  
+    const valoresSaidas = movimentacoes
+      .filter(mov => mov.tipo === 'S')
+      .map(mov => parseFloat(mov.valor));
+  
+    // Defina os datasets para entradas e saídas
+    const dadosGrafico = {
+      labels: datasEntradas, // Usar datas de entradas ou saídas (depende do que você quer mostrar)
+      datasets: [
+        {
+          label: 'Entradas',
+          data: valoresEntradas,
+          fill: false,
+          borderColor: 'rgba(75,192,192,1)',
+          backgroundColor: 'rgba(75,192,192,0.2)',
+          tension: 0.1,
+        },
+        {
+          label: 'Saídas',
+          data: valoresSaidas,
+          fill: false,
+          borderColor: 'rgba(255,99,132,1)', // Cor diferente para as saídas
+          backgroundColor: 'rgba(255,99,132,0.2)',
+          tension: 0.1,
+        },
+      ],
     };
   
-    buscarMovimentacoes();
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-  
-
-  // Defina dadosGrafico e opcoesGrafico aqui
-  const dadosGrafico = {
-    labels: movimentacoes.map(mov => new Date(mov.dataRegistro).toISOString().slice(0, 10)),
-    datasets: [
-      {
-        label: 'Quantidade das Movimentações',
-        data: movimentacoes.map(mov => parseFloat(mov.quantidade)), // Garanta que são valores numéricos
-        fill: false,
-        borderColor: 'rgba(75,192,192,1)',
-        backgroundColor: 'rgba(75,192,192,0.2)',
-        tension: 0.1,
-      },
-    ],
-  };
-
-  const dadosGrafico2 = {
-    labels: movimentacoes.map(mov => new Date(mov.dataRegistro).toISOString().slice(0, 10)),
-    datasets: [
-      {
-        label: 'Valor das Movimentações',
-        data: movimentacoes.map(mov => parseFloat(mov.valor)), 
-        fill: false,
-        borderColor: 'rgba(75,192,192,1)',
-        backgroundColor: 'rgba(75,192,192,0.2)',
-        tension: 0.1,
-      },
-    ],
-  };
-
-  const opcoesGrafico = {
-  scales: {
-    y: {
-      beginAtZero: true,
-      suggestedMax: Math.max(...movimentacoes.map(mov => parseFloat(mov.quantidade))) + 100,
-    },
-    x: {
-        type: 'time',
-        time: {
-          unit: 'day',
-          tooltipFormat: 'yyyy-MM-dd', 
-          displayFormats: {
-            day: 'yyyy-MM-dd',
-          },
-      },
-      title: {
-        display: true,
-        text: 'Data',
-      },
-    },
-  },
-  maintainAspectRatio: false,
-};
-
-const opcoesGrafico2 = {
-    scales: {
-      y: {
-        beginAtZero: true,
-        suggestedMax: Math.max(...movimentacoes.map(mov => parseFloat(mov.valor))) + 100, 
-      },
-      x: {
+    const opcoesGrafico = {
+      scales: {
+        y: {
+          beginAtZero: true,
+          suggestedMax: Math.max(...valoresEntradas, ...valoresSaidas) + 100, // Ajuste a escala y
+        },
+        x: {
           type: 'time',
           time: {
             unit: 'day',
-            tooltipFormat: 'yyyy-MM-dd', 
+            tooltipFormat: 'yyyy-MM-dd',
             displayFormats: {
               day: 'yyyy-MM-dd',
             },
-        },
-        title: {
-          display: true,
-          text: 'Data',
+          },
+          title: {
+            display: true,
+            text: 'Data',
+          },
         },
       },
-    },
-    maintainAspectRatio: false,
+      maintainAspectRatio: false,
+    };
+  
+    return (
+      <div>
+        <h1>Movimentações</h1>
+        <div style={{ height: '500px', width: '100%' }}>
+          <Line data={dadosGrafico} options={opcoesGrafico} />
+        </div>
+      </div>
+    );
   };
-
-  return (
-    <div>
-      <h1>Quantidade de movimentações</h1>
-      <div style={{ height: '500px', width: '100%' }}>
-        <Line data={dadosGrafico} options={opcoesGrafico} />
-      </div>
-      <h1>Valor de movimentações</h1>
-      <div style={{ height: '500px', width: '100%' }}>
-        <Line data={dadosGrafico2} options={opcoesGrafico2} />
-      </div>
-    </div>
-    
-  );
-};
-
-export default Graficos;
+  
+  export default Graficos;
+  
