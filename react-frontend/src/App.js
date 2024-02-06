@@ -29,7 +29,9 @@ import RelatorioMensal from "./componentes/RelatorioMensal";
 //componentes welcome
 import WelcomePage from "./componentes/WelcomePage";
 
-
+//componentes graficos
+import Graficos from "./componentes/Graficos";
+import GraficoMovimentacoes from "./componentes/GraficoMovimentacoes";
 
 
 
@@ -77,6 +79,9 @@ function App() {
           <Route exact path={["/", "/RelatorioSemanal"]} component={RelatorioSemanal} />
           <Route exact path={["/", "/Produtos/fornecedor/:fornecedor_id"]} component={ListaProdutosDoFornecedor} /> 
           <Route exact path={["/", "/WelcomePage"]} component={WelcomePage} />         
+          <Route exact path={["/", "/Graficos"]} component={Graficos} />         
+          <Route exact path={["/", "/GraficoMovimentacoes"]} component={GraficoMovimentacoes} />         
+
 
 
           <Route exact path="/NovoFornecedor" component={NovoFornecedor} />
