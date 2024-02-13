@@ -11,22 +11,20 @@ import {
     Tooltip,
     Legend,
   } from 'chart.js';
-  import 'chartjs-adapter-date-fns'; // Importar o adaptador de data necessário para a escala de tempo
+  import 'chartjs-adapter-date-fns'; 
   
   ChartJS.register(
     CategoryScale,
     LinearScale,
     PointElement,
     LineElement,
-    TimeScale, // Registrar a TimeScale aqui
+    TimeScale, 
     Title,
     Tooltip,
     Legend
   );
   
-  
-  // ... o restante do seu código para criar o gráfico
-  
+    
 
 const GraficoMovimentacoes = ({ movimentacoes }) => {
     const dadosGrafico = {

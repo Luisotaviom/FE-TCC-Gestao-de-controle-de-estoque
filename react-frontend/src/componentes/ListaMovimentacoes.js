@@ -20,7 +20,7 @@ const ListaDeMovimentacoes = (props) => {
   const pageSizes = [4, 8, 12];
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [categoriaLista, setCategoriaLista] = useState("");
+  const [categoriaMovimentacao, setCategoriaMovimentacao] = useState("");
   
 
   movimentacoesRef.current = movimentacoes;
@@ -53,7 +53,7 @@ const buscarVariaveisDePaginacao = (page, pageSize, tipo, categoria, dataRegistr
 };
 
   const buscarMovimentacoes = () => {
-    const params = buscarVariaveisDePaginacao(page, pageSize, tipoMovimentacao, { start: startDate, end: endDate });
+    const params = buscarVariaveisDePaginacao(page, pageSize, tipoMovimentacao, categoriaMovimentacao, { start: startDate, end: endDate });
   
     if (tipoMovimentacao && startDate && endDate) {
       MovimentacoesDataService.getDataETipo(params)
@@ -62,6 +62,11 @@ const buscarVariaveisDePaginacao = (page, pageSize, tipo, categoria, dataRegistr
     }
     else if (tipoMovimentacao) {
       MovimentacoesDataService.getTipos(params)
+        .then(handleResponse)
+        .catch(handleError);
+    }
+    else if (categoriaMovimentacao) {
+      MovimentacoesDataService.getCategoria(params)
         .then(handleResponse)
         .catch(handleError);
     }
@@ -111,19 +116,18 @@ const buscarVariaveisDePaginacao = (page, pageSize, tipo, categoria, dataRegistr
       console.log(error);
   };
 
-  useEffect(buscarMovimentacoes, [page, pageSize, tipoMovimentacao]);
+  useEffect(buscarMovimentacoes, [page, pageSize, tipoMovimentacao, categoriaMovimentacao]);
 
   const handlePageChange = (event, value) => {
     setPage(parseInt(value, 10)); // Converte para número
   };
   
-  const handleCategoriaMovimentacaoChange = (event) => {
-    setCategoriaLista(event.target.value);
-  };
 
-  const handlePageSizeChange = (event) => {
-    setPageSize(event.target.value);
-    setPage(1);
+  const handleCategoriaMovimentacaoChange = (event) => {
+    const categoria = event.target.value;
+    const categoriaValida = (categoria === "Gas" || categoria === "Agua") ? categoria.toUpperCase() : "";
+
+    setCategoriaMovimentacao(categoriaValida);
   };
 
   const handleTipoMovimentacaoChange = (event) => {
@@ -131,6 +135,11 @@ const buscarVariaveisDePaginacao = (page, pageSize, tipo, categoria, dataRegistr
     const tipoValido = (valor === "E" || valor === "S") ? valor.toUpperCase() : "";
 
     setTipoMovimentacao(tipoValido);
+  };
+
+  const handlePageSizeChange = (event) => {
+    setPageSize(event.target.value);
+    setPage(1);
   };
 
   const handleStartDateChange = (event) => {
@@ -251,10 +260,10 @@ const buscarVariaveisDePaginacao = (page, pageSize, tipo, categoria, dataRegistr
           </div>
           <div>
             {"Categoria: "}
-            <select onChange={handleTipoMovimentacaoChange} value={categoriaLista}>
+            <select onChange={handleCategoriaMovimentacaoChange} value={categoriaMovimentacao}>
               <option value="">Todos</option>
-              <option value="Gás">Gás</option>
-              <option value="Água">Água</option>
+              <option value="Gas">Gás</option>
+              <option value="Agua">Água</option>
             </select>
           </div>
           <div>
@@ -332,7 +341,13 @@ const buscarVariaveisDePaginacao = (page, pageSize, tipo, categoria, dataRegistr
           </select>
           <div className="mt-3">
             <button type="button" className="btn btn-success" onClick={() => props.history.push("/NovaMovimentacao")}>
-            Criar Movimentacoes
+              Criar Movimentacoes
+            </button>
+            <button type="button" className="btn btn-primary" onClick={() => props.history.push("/RelatorioSemanal")}>
+              Relatorio Semanal
+            </button>
+            <button type="button" className="btn btn-primary" onClick={() => props.history.push("/RelatorioMensal")}>
+              Relatorio mensal
             </button>
           </div>
 

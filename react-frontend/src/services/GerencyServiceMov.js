@@ -24,6 +24,10 @@ const getTipos = (params) => {
   return http.get("/Movimentacoes/buscarPorTipo", { params });
 };
 
+const getCategoria = (params) => {
+  return http.get("/Movimentacoes/buscarPorCategoria", { params });
+};
+
 const getData = (params) => {
   return http.get("/Movimentacoes/buscarPorData", { params });
 };
@@ -54,6 +58,7 @@ const GerencyServerMov = {
   remove,
   getData,
   getDataETipo,
+  getCategoria,
   getRelatorioSemanal,
   getRelatorioMensal,
   getTiposRelatorios
