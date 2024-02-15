@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from 'react';
 import MovimentacaoDataService from "../services/GerencyServiceMov";
 
 const NovaMovimentacao = (props) => {
@@ -14,6 +14,36 @@ const NovaMovimentacao = (props) => {
   const [Movimentacao, setMovimentacao] = useState(initialMovimentacaotate);
   const [submitted, setSubmitted] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
+  const [fornecedores, setFornecedores] = useState([]);
+  const [produtos, setProdutos] = useState([]);
+
+  useEffect(() => {
+    fetch('http://localhost:8080/Fornecedores')
+      .then(response => response.json())
+      .then(data => {
+        // Assumindo que a resposta seja um objeto com uma chave 'content' que é um array
+        if (data.content && Array.isArray(data.content)) {
+          setFornecedores(data.content);
+        } else {
+          console.error('Data is not in expected format:', data);
+        }
+      })
+      .catch(error => console.error('Fetch error:', error));
+  
+    fetch('http://localhost:8080/Produtos')
+      .then(response => response.json())
+      .then(data => {
+        // Assumindo que a resposta seja um objeto com uma chave 'content' que é um array
+        if (data.content && Array.isArray(data.content)) {
+          setProdutos(data.content);
+        } else {
+          console.error('Data is not in expected format:', data);
+        }
+      })
+      .catch(error => console.error('Fetch error:', error));
+  }, []);
+  
+
 
   const handleInputChange = event => {
     const { name, value } = event.target;
@@ -40,6 +70,8 @@ const NovaMovimentacao = (props) => {
         [name]: updatedValue
     }));
 };
+
+  
 
   const checkFormValidity = (formState) => {
     const { produto_id, quantidade, valor, tipo, dataRegistro, fornecedor_id } = formState;
@@ -114,17 +146,23 @@ const NovaMovimentacao = (props) => {
       ) : (
         <div>
           <div className="form-group">
-            <label htmlFor="produto_id">Produto ID</label>
-            <input
-              type="text"
-              className="form-control"
-              id="produto_id"
-              required
-              value={Movimentacao.produto_id}
-              onChange={handleInputChange}
-              name="produto_id"
-            />
+          <label htmlFor="produtoId">Produto ID</label>
+          <input
+            type="text"
+            className="form-control"
+            id="produtoId"
+            name="produto_id"
+            onChange={handleInputChange}
+            value={Movimentacao.produto_id}
+            list="produtos-list"
+          />
+          <datalist id="produtos-list">
+            {Array.isArray(produtos) && produtos.map((produto) => (
+              <option key={produto.id} value={produto.id}>{produto.nome}</option>
+            ))}
+          </datalist>
           </div>
+
           <div className="form-group">
             <label htmlFor="quantidade">Quantidade</label>
             <input
@@ -137,6 +175,7 @@ const NovaMovimentacao = (props) => {
               name="quantidade"
             />
           </div>
+
           <div className="form-group">
             <label htmlFor="valor">Valor</label>
             <input
@@ -149,6 +188,7 @@ const NovaMovimentacao = (props) => {
               name="valor"
             />
           </div>
+
           <div className="form-group">
             <label htmlFor="tipo">Tipo</label>
             <select
@@ -164,6 +204,7 @@ const NovaMovimentacao = (props) => {
               <option value="S">Saída</option>
             </select>
           </div>
+
           <div className="form-group">
             <label htmlFor="dataRegistro">Data de Registro</label>
             <input
@@ -176,18 +217,25 @@ const NovaMovimentacao = (props) => {
               name="dataRegistro"
             />
           </div>
+
           <div className="form-group">
-            <label htmlFor="fornecedor_id">Fornecedor ID</label>
-            <input
-              type="text"
-              className="form-control"
-              id="fornecedor_id"
-              required
-              value={Movimentacao.fornecedor_id}
-              onChange={handleInputChange}
-              name="fornecedor_id"
-            />
+          <label htmlFor="fornecedorId">Fornecedor </label>
+          <input
+            type="text"
+            className="form-control"
+            id="fornecedorId"
+            name="fornecedor_id"
+            onChange={handleInputChange}
+            value={Movimentacao.fornecedor_id}
+            list="fornecedors-list"
+          />
+          <datalist id="fornecedors-list">
+            {Array.isArray(fornecedores) && fornecedores.map((fornecedor) => (
+              <option key={fornecedor.id} value={fornecedor.id}>{fornecedor.nome}</option>
+            ))}
+          </datalist>
           </div>
+
           <button onClick={saveMovimentacao} className="btn btn-success" disabled={!isFormValid}>
             Criar movimentação
           </button>

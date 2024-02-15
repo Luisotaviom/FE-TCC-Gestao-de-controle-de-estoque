@@ -92,7 +92,7 @@ const buscarVariaveisDePaginacao = (page, pageSize, tipo, categoria, dataRegistr
     const id = movimentacoesRef.current[rowIndex].id;
     MovimentacoesDataService.remove(id)
       .then((response) => {
-        props.history.push("/Movimentacoes");
+        props.history.push("/ListaDeMovimentacoes");
   
         let novasMovimentacoes = [...movimentacoesRef.current];
         novasMovimentacoes.splice(rowIndex, 1);
