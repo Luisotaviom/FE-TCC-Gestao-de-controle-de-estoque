@@ -1,57 +1,93 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import RelatorioMensalDataService from "../services/GerencyServiceMov";
 import { useTable } from "react-table";
-
+import Select from 'react-select';
 
 
 const RelatorioMensal = (props) => {
   const [RelatorioMensal, definirRelatorioMensal] = useState([]);
-  const [tipoRelatorio, setTipoRelatorio] = useState("");
-  const [categoriaRelatorio, setCategoriaRelatorio] = useState("");
+  const [tipoRelatorio] = useState("");
   const RelatorioMensalRef = useRef();
+  const [selectedOptions, setSelectedOptions] = useState([]);
 
   RelatorioMensalRef.current = RelatorioMensal;
 
   const buscarRelatorioMensal = () => {
-    const params = {};
-    if (tipoRelatorio) {
-      params.tipo = tipoRelatorio;
+    const tipos = selectedOptions
+      .filter(option => option.value.startsWith('tipo-'))
+      .map(option => option.value.replace('tipo-', ''));
+  
+    const categorias = selectedOptions
+      .filter(option => option.value.startsWith('categoria-'))
+      .map(option => option.value.replace('categoria-', ''));
+  
+    // Constrói a URL de requisição com parâmetros corretos.
+    const params = new URLSearchParams();
+    if (tipos.length > 0) {
+      params.append('tipo', tipos[0]); // Supondo que só pode haver um tipo
     }
-    if (categoriaRelatorio) {
-      params.categoria = categoriaRelatorio;
+    if (categorias.length > 0) {
+      params.append('categoria', categorias[0]); // Supondo que só pode haver uma categoria
     }
   
     definirRelatorioMensal([]);
-  
-    RelatorioMensalDataService.getRelatorioMensal(params)
+    
+    RelatorioMensalDataService.getRelatorioMensal(params.toString())
       .then(handleResponse)
       .catch(handleError);
   };
   
   
+  
   const handleResponse = (response) => {
-    if (response.data && response.data.content) {
-      definirRelatorioMensal(response.data.content);
-    } else {
-      definirRelatorioMensal([]);
+    let data = response.data && response.data.content ? response.data.content : [];  
+    // Filtro aplicado aqui...
+    if (selectedOptions.length > 0) {
+      data = data.filter(item => {
+        // Assume que 'tipo' é 'E' ou 'S' e 'categoria' é o nome da categoria sem prefixo.
+        const tipoFiltros = selectedOptions
+          .filter(option => option.value.startsWith('tipo-'))
+          .map(option => option.value.replace('tipo-', ''));
+        const categoriaFiltros = selectedOptions
+          .filter(option => option.value.startsWith('categoria-'))
+          .map(option => option.value.replace('categoria-', ''));
+  
+        const correspondeAoTipo = tipoFiltros.length === 0 || tipoFiltros.includes(item.tipo);
+        const correspondeACategoria = categoriaFiltros.length === 0 || categoriaFiltros.includes(item.categoria);
+  
+        return correspondeAoTipo && correspondeACategoria;
+      });
     }
+      definirRelatorioMensal(data);
   };
+  
   
   const handleError = (error) => {
     console.error('Erro ao buscar relatório semanal:', error);
+    if (error.response) {
+      console.error("Dados da resposta:", error.response.data);
+      console.error("Status da resposta:", error.response.status);
+      console.error("Cabeçalhos da resposta:", error.response.headers);
+    } else if (error.request) {
+      console.error("Requisição feita, sem resposta:", error.request);
+    } else {
+      console.error("Erro:", error.message);
+    }
   };
-  
-  useEffect(buscarRelatorioMensal, [tipoRelatorio, categoriaRelatorio]);
-  
 
-  const handleTipoMovimentacaoChange = (event) => {
-    setTipoRelatorio(event.target.value);
+  useEffect(buscarRelatorioMensal, [selectedOptions]);
+
+  const options = [
+    { value: 'tipo-E', label: 'Tipo: Entrada' },
+    { value: 'tipo-S', label: 'Tipo: Saída' },
+    { value: 'categoria-Gás', label: 'Categoria: Gás' },
+    { value: 'categoria-Água', label: 'Categoria: Água' },
+  ];
+
+  const handleChange = selectedOption => {
+    setSelectedOptions(selectedOption);
   };
-  
-  const handleCategoriaMovimentacaoChange = (event) => {
-    setCategoriaRelatorio(event.target.value);
-  };
-  
+
 
   const tableStyle = {
     width: '100%',
@@ -72,28 +108,34 @@ const RelatorioMensal = (props) => {
   const totais = RelatorioMensal.reduce((acc, item) => {
     const quantidade = Number(item.quantidade);
     const valor = Number(item.valor);
-    
-    // Se estiver visualizando todos os tipos, calcula a diferença
-    if (tipoRelatorio === "") {
-      if (item.tipo === 'E') {
-        acc.totalQuantidade += quantidade;
-        acc.totalValor -= valor;
-      } else if (item.tipo === 'S') {
-        acc.totalQuantidade -= quantidade;
-        acc.totalValor += valor;
-      }
-    }
-    // Se estiver visualizando apenas entradas ou apenas saídas, soma os valores
+  
+    // Se "Saída" for selecionada, soma as quantidades e valores de saída
+    if (tipoRelatorio === "S") {
+        if (item.tipo === 'S') {
+            acc.totalQuantidade += quantidade;
+            acc.totalValor += valor;
+        }
+    } 
+    // Se "Entrada" for selecionada, soma as quantidades e valores de entrada
+    else if (tipoRelatorio === "E") {
+        if (item.tipo === 'E') {
+            acc.totalQuantidade += quantidade;
+            acc.totalValor += valor;
+        }
+    } 
+    // Se nenhum ou ambos os filtros estiverem ativos, subtrai saídas de entradas
     else {
-      if (item.tipo === tipoRelatorio) {
-        acc.totalQuantidade += quantidade;
-        acc.totalValor += valor;
-      }
+        if (item.tipo === 'E') {
+            acc.totalQuantidade += quantidade;
+            acc.totalValor -= valor;
+        } else if (item.tipo === 'S') {
+            acc.totalQuantidade -= quantidade;
+            acc.totalValor += valor;
+        }
     }
-    
+  
     return acc;
 }, { totalQuantidade: 0, totalValor: 0 });
-
 
 
 
@@ -120,6 +162,7 @@ const RelatorioMensal = (props) => {
       {
         Header: "Tipo",
         accessor: "tipo",
+        Cell: ({ value }) => value === 'E' ? 'Entrada' : 'Saída'
       },
       {
         Header: "Categoria",
@@ -169,21 +212,17 @@ const RelatorioMensal = (props) => {
       <div className="col-md-12">
         <h2>Relatorio Mensal</h2>
         <div className="d-flex justify-content-between mt-3">
-          <div>
-            {"Tipo: "}
-            <select onChange={handleTipoMovimentacaoChange} value={tipoRelatorio}>
-              <option value="">Todos</option>
-              <option value="E">Entrada</option>
-              <option value="S">Saída</option>
-            </select>
-          </div>
-          <div>
-            {"Categoria: "}
-            <select onChange={handleCategoriaMovimentacaoChange} value={categoriaRelatorio}>
-              <option value="">Todos</option>
-              <option value="Gás">Gás</option>
-              <option value="Água">Água</option>
-            </select>
+          <div className="filter-section">
+            <Select
+              isMulti
+              name="filtros"
+              options={options}
+              className="basic-multi-select"
+              classNamePrefix="select"
+              onChange={handleChange}
+              value={selectedOptions}
+              placeholder="Selecione tipos ou categorias..."
+            />
           </div>
         </div>
       </div>

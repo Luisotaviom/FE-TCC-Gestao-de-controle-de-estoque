@@ -173,6 +173,7 @@ const buscarVariaveisDePaginacao = (page, pageSize, tipo, categoria, dataRegistr
       {
         Header: "Tipo",
         accessor: "tipo",
+        Cell: ({ value }) => value === 'E' ? 'Entrada' : 'Saída'
       },
       {
         Header: "Categoria",

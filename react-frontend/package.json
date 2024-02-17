@@ -23,6 +23,7 @@
     "react-dom": "^17.0.1",
     "react-router-dom": "^5.2.0",
     "react-scripts": "5.0.1",
+    "react-select": "^5.8.0",
     "react-table": "^7.8.0",
     "recharts": "^2.12.0",
     "victory": "^36.9.1",
