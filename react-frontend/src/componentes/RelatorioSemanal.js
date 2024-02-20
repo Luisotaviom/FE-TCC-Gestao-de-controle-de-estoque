@@ -21,7 +21,6 @@ const RelatorioSemanal = (props) => {
       .filter(option => option.value.startsWith('categoria-'))
       .map(option => option.value.replace('categoria-', ''));
   
-    // Constrói a URL de requisição com parâmetros corretos.
     const params = new URLSearchParams();
     if (tipos.length > 0) {
       params.append('tipo', tipos[0]); // Supondo que só pode haver um tipo

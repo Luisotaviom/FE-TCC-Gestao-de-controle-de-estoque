@@ -2,24 +2,18 @@ import React, { useState, useEffect, useMemo, useRef } from "react";
 import Pagination from "@material-ui/lab/Pagination";
 import ProdutosDataService from "../services/GerencyService";
 import { useTable } from "react-table";
-import styles from './css.module.css'; // Ajuste o caminho conforme necessário
-
+import styles from './css.module.css'; 
+import Select from 'react-select';
 
 const ListaDeProdutos = (props) => {
-  /**
-   * useState é um Hook do React que permite adicionar estado a componentes de função. 
-   * Neste caso, useState([]) inicializa um estado chamado "users" com um valor inicial de um array vazio []. 
-   * O array vazio é passado como um valor inicial para o estado.
-   */
   const [produtos, definirProdutos] = useState([]);
-  const [statusAtivo, setStatusAtivo] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState(null);
   const produtosRef = useRef();
   const [page, setPage] = useState(1);
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(4);
   const pageSizes = [4, 8, 12];
   const [searchTerm, setSearchTerm] = useState("");
-
 
   produtosRef.current = produtos;
 
@@ -34,7 +28,7 @@ const ListaDeProdutos = (props) => {
       params["size"] = pageSize;
     }
     
-    if (ativo) {
+    if (ativo !== null) {
       params["ativo"] = ativo;
     }
     
@@ -45,50 +39,31 @@ const ListaDeProdutos = (props) => {
     return params;
   };
 
-
   const buscarProdutos = () => {
-    // Aqui, substitua 'nome' por 'searchTerm'
+    const statusAtivo = selectedStatus ? selectedStatus.value : null;
     const params = buscarVariaveisDePaginacao(page, pageSize, statusAtivo, searchTerm);
     
-    if (searchTerm) {
-      // Se um termo de pesquisa foi fornecido, use o serviço correspondente
-      ProdutosDataService.getNome(params)
-        .then(handleResponse)
-        .catch(handleError);
-    } else if (statusAtivo !== "") {
-      // Se um status específico foi selecionado, busca por status
-      ProdutosDataService.getStatus(params)
-        .then(handleResponse)
-        .catch(handleError);
-    } else {
-      // Se nenhum status ou termo de pesquisa foi fornecido, busca todos os produtos
-      ProdutosDataService.getAll(params)
-        .then(handleResponse)
-        .catch(handleError);
-    }
+    ProdutosDataService.getAll(params) 
+      .then(handleResponse)
+      .catch(handleError);
+
+      ProdutosDataService.NomeEStatus(params) 
+      .then(handleResponse)
+      .catch(handleError);
   };
-  
 
   const handleResponse = (response) => {
-    const movimentacoes = response.data.content;
-    const totalPages = response.data.totalPages;
+    const { content, totalPages } = response.data;
 
-    definirProdutos(movimentacoes);
+    definirProdutos(content);
     setCount(totalPages);
   };
 
   const handleError = (error) => {
-    console.error(error); // Exemplo de saída do erro
+    console.error(error);
   };
 
-  useEffect(buscarProdutos, [page, pageSize, statusAtivo]);
-
-  const openProdutos = (rowIndex) => {
-    const id = produtosRef.current[rowIndex].id;
-
-    props.history.push("/Produtos/" + id);
-  };
-
+  useEffect(buscarProdutos, [page, pageSize, selectedStatus, searchTerm]);
 
   const handlePageChange = (event, value) => {
     setPage(value);
@@ -99,12 +74,20 @@ const ListaDeProdutos = (props) => {
     setPage(1);
   };
 
-  const handleStatusChange = (event) => {
-    const valor = event.target.value;
-  
-    // Comparar diretamente com as strings "true" e "false"
-    setStatusAtivo(valor);
+  const handleStatusChange = selectedOption => {
+    setSelectedStatus(selectedOption);
   };
+
+  const openProdutos = (rowIndex) => {
+    const id = produtosRef.current[rowIndex].id;
+
+    props.history.push("/Produtos/" + id);
+  };
+
+  const opcoesStatus = [
+    { value: true, label: 'Ativo' },
+    { value: false, label: 'Inativo' }
+  ];
 
   const columns = useMemo(
     () => [
@@ -169,23 +152,28 @@ const ListaDeProdutos = (props) => {
     <div className="col-md-12">
       <h2 className={styles.h2}>Lista de Produtos</h2>
       <div className="d-flex justify-content-between mt-3">
-        <div>
-          <span className="mr-2">Itens por página:</span>
-          <select className="custom-select" style={{ width: 'auto' }} onChange={handlePageSizeChange} value={pageSize}>
-            {pageSizes.map((size) => (
-              <option key={size} value={size}>
-                {size}
-              </option>
-            ))}
-          </select>
-        </div>
+          <div>
+            <span className="mr-2">Itens por página:</span>
+            <select className="custom-select" style={{ width: 'auto' }} onChange={handlePageSizeChange} value={pageSize}>
+              {pageSizes.map((size) => (
+                <option key={size} value={size}>
+                  {size}
+                </option>
+              ))}
+            </select>
+          </div>
           <div>
             <span className="mr-2">Status:</span>
-              <select className="custom-select" style={{ width: 'auto' }} onChange={handleStatusChange} value={statusAtivo}>
-                <option value="">Todos</option>
-                <option value={true}>Ativo</option>
-                <option value={false}>Desativado</option>
-              </select>
+            <Select
+              className="basic-single"
+              classNamePrefix="select"
+              value={selectedStatus}
+              isClearable={true}
+              isSearchable={true}
+              options={opcoesStatus}
+              onChange={handleStatusChange}
+              placeholder="Selecione o status"
+            />
           </div>
           <div>
             <input
@@ -196,7 +184,7 @@ const ListaDeProdutos = (props) => {
             />
             <button onClick={buscarProdutos}>Pesquisar</button>
           </div>
-      </div>
+        </div>
 
           <Pagination
             color="primary"

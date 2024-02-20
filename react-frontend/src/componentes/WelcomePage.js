@@ -4,6 +4,7 @@ import styles from './WelcomePage.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; 
 import { faWarehouse, faTruckMoving, faList, faShoppingBasket } from '@fortawesome/free-solid-svg-icons';
 
+
 const WelcomePage = () => {
   return (
     <div className={styles.container}>
@@ -42,6 +43,9 @@ const WelcomePage = () => {
               </Link>
             <Link className={styles.card} to="/RelatorioMensal">
               <FontAwesomeIcon icon="fa-solid fa-file" />  Relatorio mensal
+            </Link>
+            <Link className={styles.card} to="/Graficos">
+              <FontAwesomeIcon icon="fa-solid fa-chart-line" /> Graficos        
             </Link>
           </div>
         </div>

@@ -2,22 +2,20 @@ import React, { useState, useEffect, useMemo, useRef } from "react";
 import Pagination from "@material-ui/lab/Pagination";
 import FornecedoresDataService from "../services/GerencyService2";
 import { useTable } from "react-table";
-import styles from './css.module.css'; // Ajuste o caminho conforme necessário
-
+import styles from './css.module.css'; 
+import Select from 'react-select';
 
 const ListaDeFornecedores = (props) => {
-  /**
-   * useState é um Hook do React que permite adicionar estado a componentes de função. 
-   * Neste caso, useState([]) inicializa um estado chamado "users" com um valor inicial de um array vazio []. 
-   * O array vazio é passado como um valor inicial para o estado.
-   */
+
   const [fornecedores, definirFornecedores] = useState([]);
-  const [statusAtivo, setStatusAtivo] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState(null);
   const fornecedoresRef = useRef();
   const [page, setPage] = useState(1);
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(4);
   const pageSizes = [4, 8, 12];
+  const [selectedOptions, setSelectedOptions] = useState([]);
+
 
   fornecedoresRef.current = fornecedores;
 
@@ -40,20 +38,32 @@ const ListaDeFornecedores = (props) => {
   };
 
   const buscarFornecedores = () => {
-    const params = buscarVariaveisDePaginacao(page, pageSize, statusAtivo);
-  
-    if (statusAtivo !== "") {
-      // Se um status específico foi selecionado, use getFornecedoresPorStatus
-      FornecedoresDataService.getStatus({ ...params, ativo: statusAtivo })
+    const params = buscarVariaveisDePaginacao(page, pageSize, selectedStatus);
+    
+    const tipos = selectedOptions
+      .filter(option => option.value.startsWith('tipo-'))
+      .map(option => option.value.replace('tipo-', ''));
+
+    if (tipos.length > 0) {
+      params.tipo = tipos[0]; 
+    }
+
+    if (selectedStatus !== "") {
+      FornecedoresDataService.getStatus({ ...params, ativo: selectedStatus })
         .then(handleResponse)
         .catch(handleError);
     } else {
-      // Se nenhum status foi selecionado, busque todos os fornecedores
       FornecedoresDataService.getAll2(params)
         .then(handleResponse)
         .catch(handleError);
     }
-  };
+};
+
+const opcoesStatus = [
+  { value: true, label: 'Ativo' },
+  { value: false, label: 'Inativo' }
+];
+
 
   const handleResponse = (response) => {
     const movimentacoes = response.data.content;
@@ -64,7 +74,7 @@ const ListaDeFornecedores = (props) => {
   };
 
   const handleError = (error) => {
-    console.error(error); // Exemplo de saída do erro
+    console.error(error);
   };
   
 
@@ -86,7 +96,7 @@ const ListaDeFornecedores = (props) => {
   };
   
 
-  useEffect(buscarFornecedores, [page, pageSize, statusAtivo]);
+  useEffect(buscarFornecedores, [page, pageSize, selectedStatus]);
 
   const handlePageChange = (event, value) => {
     setPage(value);
@@ -97,12 +107,10 @@ const ListaDeFornecedores = (props) => {
     setPage(1);
   };
 
-  const handleStatusChange = (event) => {
-    const valor = event.target.value;
-  
-    // Comparar diretamente com as strings "true" e "false"
-    setStatusAtivo(valor);
+  const handleStatusChange = selectedOption => {
+    setSelectedStatus(selectedOption ? selectedOption.value : "");
   };
+  
 
   function formatPhoneNumber(phoneString) {
     const cleaned = ('' + phoneString).replace(/\D/g, '');
@@ -200,11 +208,16 @@ const ListaDeFornecedores = (props) => {
           </div>
           <div>
           <span className="mr-2">Status:</span>
-            <select className="custom-select" style={{ width: 'auto' }} onChange={handleStatusChange} value={statusAtivo}>
-              <option value="">Todos</option>
-              <option value={true}>Ativo</option>
-              <option value={false}>Desativado</option>
-            </select>
+            <Select
+              className="basic-single"
+              classNamePrefix="select"
+              defaultValue={selectedOptions}
+              isClearable={true}
+              isSearchable={true}
+              name="status"
+              options={opcoesStatus}
+              onChange={handleStatusChange}
+            />
           </div>
             <button type="button" className="btn btn-success" onClick={() => props.history.push("/NovoFornecedor")}>
               Criar Fornecedores
