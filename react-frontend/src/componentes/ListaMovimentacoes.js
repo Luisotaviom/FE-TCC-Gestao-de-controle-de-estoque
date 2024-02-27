@@ -6,11 +6,7 @@ import styles from './css.module.css'; // Ajuste o caminho conforme necessário
 
 
 const ListaDeMovimentacoes = (props) => {
-  /**
-   * useState é um Hook do React que permite adicionar estado a componentes de função. 
-   * Neste caso, useState([]) inicializa um estado chamado "users" com um valor inicial de um array vazio []. 
-   * O array vazio é passado como um valor inicial para o estado.
-   */
+
   const [movimentacoes, definirMovimentacoes] = useState([]);
   const [tipoMovimentacao, setTipoMovimentacao] = useState("");
   const movimentacoesRef = useRef();

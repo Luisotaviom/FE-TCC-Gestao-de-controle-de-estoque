@@ -4,6 +4,9 @@ import "bootstrap/dist/css/bootstrap.min.css"; // importa bootstrap como estilo
 import "./App.css"; // importa estilo do projeto
 import "@fortawesome/fontawesome-free/css/all.css"; // importa FA
 import "@fortawesome/fontawesome-free/js/all.js"; // importa FA
+import { AuthProvider } from "./contexts/AuthContext";
+
+
 
 //componentes Produtos
 import ListaDeProdutos from "./componentes/ListaProdutos";
@@ -32,6 +35,8 @@ import WelcomePage from "./componentes/WelcomePage";
 //componentes graficos
 import Graficos from "./componentes/Graficos";
 
+//componentes autenticação
+import LoginPage from "./componentes/LoginPage";
 
 
 function App() {
@@ -42,6 +47,7 @@ function App() {
     return pathname !== "/WelcomePage" && pathname !== "/";
   };
   return (
+    <AuthProvider>
     <div>
       {showNavBar(location.pathname) && (
        <nav className="navbar navbar-expand navbar-light bg-light">
@@ -82,8 +88,8 @@ function App() {
           <Route exact path={["/", "/RelatorioSemanal"]} component={RelatorioSemanal} />
           <Route exact path={["/", "/Produtos/fornecedor/:fornecedor_id"]} component={ListaProdutosDoFornecedor} /> 
           <Route exact path={["/", "/WelcomePage"]} component={WelcomePage} />         
-          <Route exact path={["/", "/Graficos"]} component={Graficos} />         
-
+          <Route exact path={["/", "/Graficos"]} component={Graficos} />  
+          <Route exact path={["/", "/LoginPage"]} component={LoginPage} />         
 
           <Route exact path="/NovoFornecedor" component={NovoFornecedor} />
           <Route path="/Produtos/fornecedor/:id/produto" component={CriarProduto} />
@@ -95,8 +101,10 @@ function App() {
         </Switch>
       </div>
     </div>
-     
+    </AuthProvider>
+
   );
 }
+
 
 export default App;

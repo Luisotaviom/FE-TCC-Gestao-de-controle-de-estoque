@@ -1,12 +1,17 @@
-// declaração das funcionalidades utilizadas nesse arquivo
-import React from "react"; // biblioteca principal
-import ReactDOM from "react-dom";  // biblioteca para lidar com o DOM
-import { BrowserRouter } from "react-router-dom"; // biblioteca para roteamento
-import App from "./App"; // componente principal
+import React from 'react';
+import { createRoot } from 'react-dom/client'; // Importar createRoot
+import { BrowserRouter } from 'react-router-dom';
+import App from './App';
 
-ReactDOM.render(
+// Encontrar o elemento root no seu HTML
+const container = document.getElementById('root');
+
+// Criar uma root com createRoot
+const root = createRoot(container);
+
+// Renderizar o App com a nova API
+root.render(
   <BrowserRouter>
     <App />
-  </BrowserRouter>,
-  document.getElementById("root")
+  </BrowserRouter>
 );

@@ -39,25 +39,33 @@ const ListaDeFornecedores = (props) => {
 
   const buscarFornecedores = () => {
     const params = buscarVariaveisDePaginacao(page, pageSize, selectedStatus);
-    
+  
+    // Filtra as opções selecionadas para identificar tipos específicos
     const tipos = selectedOptions
       .filter(option => option.value.startsWith('tipo-'))
       .map(option => option.value.replace('tipo-', ''));
-
+  
+    // Adiciona o primeiro tipo encontrado, se houver
     if (tipos.length > 0) {
       params.tipo = tipos[0]; 
     }
-
-    if (selectedStatus !== "") {
-      FornecedoresDataService.getStatus({ ...params, ativo: selectedStatus })
+  
+    // Decide qual função de serviço usar baseado na presença de filtros
+    // Se `selectedStatus` ou `tipos` estiverem definidos, usa um serviço que aplica filtros
+    // Caso contrário, busca todos fornecedores sem filtros
+    if (selectedStatus || tipos.length > 0) {
+      // Assume que `getStatus` é o método que aplica os filtros
+      FornecedoresDataService.getStatus(params)
         .then(handleResponse)
         .catch(handleError);
     } else {
-      FornecedoresDataService.getAll2(params)
+      // Assume que `getAll` é o método que busca todos fornecedores
+      FornecedoresDataService.getAll2(params) // Verifique o nome correto do método para buscar todos
         .then(handleResponse)
         .catch(handleError);
     }
-};
+  };
+  
 
 const opcoesStatus = [
   { value: true, label: 'Ativo' },
