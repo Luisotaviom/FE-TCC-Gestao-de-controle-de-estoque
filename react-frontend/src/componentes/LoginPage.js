@@ -1,10 +1,11 @@
-import { useHistory } from 'react-router-dom'; // Assuming you're using react-router
+import React, { useContext } from "react";
+import { useHistory } from 'react-router-dom';
 import { AuthContext } from "../contexts/AuthContext";
 import { useForm } from "react-hook-form";
-import React, { useContext } from "react";
+import '../CSS/FormularioLogin.css'; // importar o arquivo CSS
 
 const FormularioLogin = () => {
-  const history = useHistory(); // For redirection after login
+  const history = useHistory();
   const { signIn } = useContext(AuthContext);
   const { register, handleSubmit } = useForm();
   const [error, setError] = React.useState(null);
@@ -12,42 +13,42 @@ const FormularioLogin = () => {
   const handleLogin = async (data) => {
     try {
       await signIn(data);
+      history.push('/WelcomePage'); // Redirecionar para a página inicial após o login
     } catch (error) {
-      // Definir estado de erro para mostrar na UI
-      setError(error.message);
+      setError("Falha ao entrar. Verifique seu usuário e senha.");
     }
   };
 
   return (
-    <form onSubmit={handleSubmit(handleLogin)}>
-      <div>
-        <label htmlFor="username">Nome de Usuário:</label>
-        <input
+    <div className="login-container">
+      {error && <div className="login-alert">{error}</div>}
+      <form className="login-form" onSubmit={handleSubmit(handleLogin)}>
+        {error && <div className="login-error">{error}</div>}
+        <div className="form-group">
+          <label htmlFor="username">Nome de Usuário:</label>
+          <input
             {...register('username')}
             id="username"
-            name="username"
             type="text"
             autoComplete="username"
             required
-            className=""
-            placeholder="username"
+            placeholder="Digite seu nome de usuário"
           />
-      </div>
-      <div>
-        <label htmlFor="password">Senha:</label>
-        <input
+        </div>
+        <div className="form-group">
+          <label htmlFor="password">Senha:</label>
+          <input
             {...register('password')}
             id="password"
-            name="password"
             type="password"
-            autoComplete="password"
+            autoComplete="current-password"
             required
-            className=""
-            placeholder="password"
+            placeholder="Digite sua senha"
           />
-      </div>
-      <button type="submit">Entrar</button>
-    </form>
+        </div>
+        <button type="submit" className="login-button">Entrar</button>
+      </form>
+    </div>
   );
 };
 

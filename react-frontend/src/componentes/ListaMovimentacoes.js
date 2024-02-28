@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import Pagination from "@material-ui/lab/Pagination";
 import MovimentacoesDataService from "../services/GerencyServiceMov";
-import { useTable } from "react-table";
-import styles from './css.module.css'; // Ajuste o caminho conforme necessário
+import styles from '../CSS/listaMovimentacoes.module.css'; 
 
 
 const ListaDeMovimentacoes = (props) => {
@@ -112,7 +111,7 @@ const buscarVariaveisDePaginacao = (page, pageSize, tipo, categoria, dataRegistr
       console.log(error);
   };
 
-  useEffect(buscarMovimentacoes, [page, pageSize, tipoMovimentacao, categoriaMovimentacao]);
+  useEffect(buscarMovimentacoes, [page, pageSize, tipoMovimentacao, categoriaMovimentacao, endDate, startDate]);
 
   const handlePageChange = (event, value) => {
     setPage(parseInt(value, 10)); // Converte para número
@@ -145,92 +144,6 @@ const buscarVariaveisDePaginacao = (page, pageSize, tipo, categoria, dataRegistr
   const handleEndDateChange = (event) => {
       setEndDate(event.target.value);
   };
-
-  const columns = useMemo(
-    () => [
-      {
-        Header: "ID",
-        accessor: "id",
-      },
-      {
-        Header: "Produto",
-        accessor: row => `${row.produto_id} (${row.produtoNome})`,
-        id: "produto", // Este é um identificador único para a coluna, necessário se você usa uma função para accessor
-      },      
-      {
-        Header: "Quantidade",
-        accessor: "quantidade",
-      },
-      {
-        Header: "Valor",
-        accessor: "valor",
-        Cell: ({ value }) => `R$ ${value.toFixed(2).replace('.', ',')}`, // Adiciona R$ e formata o número
-      },
-      {
-        Header: "Tipo",
-        accessor: "tipo",
-        Cell: ({ value }) => value === 'E' ? 'Entrada' : 'Saída'
-      },
-      {
-        Header: "Categoria",
-        accessor: "categoria",
-      },
-      {
-        Header: "Data de movimentação",
-        accessor: "dataRegistro",
-        Cell: ({ value }) => {
-          // Verificar se value (dataRegistro) é válido
-          if (!value) {
-            return "Data não disponível"; // Ou qualquer texto que você queira exibir para datas inválidas
-          }
-          const date = new Date(value);
-          const formattedDate = new Intl.DateTimeFormat('pt-BR', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit'
-          }).format(date);
-          return formattedDate; // Retorna a data formatada, por exemplo "01/03/2021, 12:00:00"
-        },
-      },
-      {
-        Header: "Fornecedor",
-        accessor: row => `${row.fornecedor_id} (${row.fornecedorNome})`,
-        id: "fornecedor", // Este é um identificador único para a coluna, necessário se você usa uma função para accessor
-      },      
-      {
-        Header: "Ações",
-        accessor: "actions",
-        Cell: (props) => {
-          const rowIdx = props.row.id;
-          return (
-            <div className="action-buttons">
-              <button type="button" className="btn btn-warning btn-sm" onClick={() => openMovimentacoes(rowIdx)}>
-                Editar movimentação
-              </button>
-              <button type="button" className="btn btn-danger btn-sm" onClick={() => deleteMovimentacoes(rowIdx)}>
-                Excluir movimentação
-              </button>
-            </div>
-          );
-        },
-      },
-    ],
-    [openMovimentacoes, deleteMovimentacoes] // Agora essas funções são estáveis e não mudarão a cada renderização
-  );
-
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-  } = useTable({
-    columns,
-    data: movimentacoes,
-  });
 
   return (
     <div className={`${styles.list} row`}>
@@ -280,7 +193,48 @@ const buscarVariaveisDePaginacao = (page, pageSize, tipo, categoria, dataRegistr
             <button onClick={buscarMovimentacoes}>Buscar</button>
           </div>
         </div>
-      
+
+        <div className={styles.cardContainer}>
+          {movimentacoes.map((movimentacao) => (
+            <div key={movimentacao.id} className={styles.card}>
+              <div className={styles.cardHeader}>
+                <h5>Movimentação: {movimentacao.id}</h5>
+              </div>
+                <div className={styles.cardBody}>
+                  <p>Produto: {`${movimentacao.produto_id} (${movimentacao.produtoNome})`}</p>
+                  <p>Quantidade: {movimentacao.quantidade}</p>
+                  <p>Valor: R$ {movimentacao.valor.toFixed(2).replace('.', ',')}</p>
+                  <p>Tipo: {movimentacao.tipo === 'E' ? 'Entrada' : 'Saída'}</p>
+                  <p>Categoria: {movimentacao.categoria}</p>
+                  <p>Data de Movimentação: {new Intl.DateTimeFormat('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                  }).format(new Date(movimentacao.dataRegistro))}</p>
+                  <p>Fornecedor: {`${movimentacao.fornecedor_id} (${movimentacao.fornecedorNome})`}</p>
+                  <div className={styles.actionButtons}>
+                    <button
+                      type="button"
+                      className={styles.button_edit}
+                      onClick={() => openMovimentacoes(movimentacao.id)}
+                    >
+                      Editar Movimentação
+                    </button>
+                    <button
+                      type="button"
+                      className={styles.button_delete}
+                      onClick={() => deleteMovimentacoes(movimentacao.id)}
+                    >
+                      Excluir Movimentação
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
 
           <Pagination
             color="primary"
@@ -295,11 +249,10 @@ const buscarVariaveisDePaginacao = (page, pageSize, tipo, categoria, dataRegistr
         </div>
 
         <table
-          {...getTableProps()}
           className={`table ${styles.listTable}`}
         >
           <thead>
-            {headerGroups.map((headerGroup) => (
+            {((headerGroup) => (
               <tr {...headerGroup.getHeaderGroupProps()}>
                 {headerGroup.headers.map((column) => (
                   <th {...column.getHeaderProps()}>
@@ -311,9 +264,9 @@ const buscarVariaveisDePaginacao = (page, pageSize, tipo, categoria, dataRegistr
               </tr>
             ))}
           </thead>
-          <tbody {...getTableBodyProps()}>
-            {rows.map((row, i) => {
-              prepareRow(row);
+          <tbody>
+            {((row, i) => {
+              ;
               return (
                 <tr {...row.getRowProps()}>
                   {row.cells.map((cell) => {
@@ -337,13 +290,13 @@ const buscarVariaveisDePaginacao = (page, pageSize, tipo, categoria, dataRegistr
             ))}
           </select>
           <div className="mt-3">
-            <button type="button" className="btn btn-success" onClick={() => props.history.push("/NovaMovimentacao")}>
+            <button type="button" className={`${styles.button_add}`} onClick={() => props.history.push("/NovaMovimentacao")}>
               Criar Movimentacoes
             </button>
-            <button type="button" className="btn btn-primary" onClick={() => props.history.push("/RelatorioSemanal")}>
+            <button type="button" className={`${styles.button_relatorios}`} onClick={() => props.history.push("/RelatorioSemanal")}>
               Relatorio Semanal
             </button>
-            <button type="button" className="btn btn-primary" onClick={() => props.history.push("/RelatorioMensal")}>
+            <button type="button" className={`${styles.button_relatorios}`} onClick={() => props.history.push("/RelatorioMensal")}>
               Relatorio mensal
             </button>
           </div>

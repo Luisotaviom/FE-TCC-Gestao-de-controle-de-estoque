@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useRef } from "react";
 import RelatorioSemanalDataService from "../services/GerencyServiceMov";
 import { useTable } from "react-table";
 import Select from 'react-select';
+import styles from '../CSS/ RelatorioSemanal.module.css'
 
 
 const RelatorioSemanal = (props) => {
@@ -247,7 +248,7 @@ const RelatorioSemanal = (props) => {
     <td style={cellStyle}>{`R$ ${totais.totalValor.toFixed(2).replace('.', ',')}`}</td>
     <td colSpan="3" style={cellStyle}></td>
   </tr>
-    <button type="button" className="btn btn-primary" onClick={() => props.history.push("/RelatorioMensal")}>
+    <button type="button"  className="btn btn-primary" onClick={() => props.history.push("/RelatorioMensal")}>
       Relatorio Mensal
     </button>
 </tbody>

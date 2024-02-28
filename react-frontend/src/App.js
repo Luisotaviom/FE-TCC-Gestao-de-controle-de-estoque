@@ -1,10 +1,11 @@
 import React from "react"; // biblioteca principal
-import { Switch, Route, Link, useLocation } from "react-router-dom"; // roteamento
+import { Switch, Route, useLocation } from "react-router-dom"; // roteamento
 import "bootstrap/dist/css/bootstrap.min.css"; // importa bootstrap como estilo 
 import "./App.css"; // importa estilo do projeto
 import "@fortawesome/fontawesome-free/css/all.css"; // importa FA
 import "@fortawesome/fontawesome-free/js/all.js"; // importa FA
 import { AuthProvider } from "./contexts/AuthContext";
+import NavBar from './componentes/NavBar'; // Importe o novo componente NavBar
 
 
 
@@ -40,45 +41,14 @@ import LoginPage from "./componentes/LoginPage";
 
 
 function App() {
-  const location = useLocation(); // Hook para obter a rota atual
+  const location = useLocation(); 
 
-  // Função para verificar se a barra de navegação deve ser mostrada
-  const showNavBar = (pathname) => {
-    return pathname !== "/WelcomePage" && pathname !== "/";
-  };
+  const shouldShowNavBar = location.pathname !== "/LoginPage" && location.pathname !== "/";
+
   return (
     <AuthProvider>
-    <div>
-      {showNavBar(location.pathname) && (
-       <nav className="navbar navbar-expand navbar-light bg-light">
-        <a href="/WelcomePage" className="navbar-brand">
-        Welcome
-        </a>
-        <div className="navbar-nav mr-auto">
-          <li className="nav-item">
-            <Link to={"/ListaDeProdutos"} className="nav-link">
-            Produtos
-            </Link>
-          </li>
-          <li className="nav-item">
-            <Link to={"/ListaDeFornecedores"} className="nav-link">
-            Fornecedores
-            </Link>
-          </li>
-          <li className="nav-item">
-            <Link to={"/ListaDeMovimentacoes"} className="nav-link">
-              Movimentacoes
-            </Link>
-          </li>
-          <li className="nav-item">
-            <Link to={"/Graficos"} className="nav-link">
-              Graficos
-            </Link>
-          </li>
-        </div>
-      </nav>
-      )}
-
+        {shouldShowNavBar && <NavBar />}
+      
       <div className="container mt-3">
         <Switch>
           <Route exact path={["/", "/ListaDeProdutos"]} component={ListaDeProdutos} />
@@ -100,7 +70,7 @@ function App() {
           <Route path="/Movimentacoes/:id" component={Movimentacoes} />      
         </Switch>
       </div>
-    </div>
+
     </AuthProvider>
 
   );

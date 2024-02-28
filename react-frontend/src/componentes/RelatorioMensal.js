@@ -2,6 +2,8 @@ import React, { useState, useEffect, useMemo, useRef } from "react";
 import RelatorioMensalDataService from "../services/GerencyServiceMov";
 import { useTable } from "react-table";
 import Select from 'react-select';
+import styles from '../CSS/ RelatorioSemanal.module.css'
+
 
 
 const RelatorioMensal = (props) => {

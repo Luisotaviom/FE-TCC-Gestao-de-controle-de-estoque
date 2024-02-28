@@ -14,4 +14,16 @@
   .table th {
     background-color: #f2f2f2; /* Cor de fundo para cabeçalhos */
   }
+
+  .button {
+    background-color: #750ca5; 
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+    text-align: center;
+    margin: 5px;
+  }
   

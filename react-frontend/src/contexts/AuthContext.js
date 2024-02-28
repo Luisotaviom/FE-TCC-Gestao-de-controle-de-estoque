@@ -19,6 +19,8 @@ export function AuthProvider({ children }) {
         maxAge: 60 * 60 * 1, // 1 hour
       });
   
+      console.log("Token após o login:", token); // Verifica se o token está correto após o login
+  
       axiosInstance.defaults.headers["Authorization"] = `Bearer ${token}`;
   
       setUser(user);
@@ -28,6 +30,7 @@ export function AuthProvider({ children }) {
       throw new Error('Login falhou'); // Lançando um novo erro
     }
   };
+  
   
 
   const fetchData = async () => {

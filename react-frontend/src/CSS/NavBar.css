@@ -1,0 +1,43 @@
+.sidebar {
+  width: 200px;
+  height: 100%;
+  position: fixed;
+  left: -200px; /* Sidebar fora da tela */
+  transition: left 0.8s; /* Animação suave para a transição */
+  background-color: #5c5c5c; /* Cor de fundo para ocupar todo o sidebar */
+}
+
+.sidebar.open {
+  left: 0; /* Mostra a sidebar */
+}
+
+.pin-sidebar {
+  right: -50px; /* Posicione o botão de pinar fora da sidebar */
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+}
+
+
+.sidebar .sidebar-links a {
+  padding: 10px 15px;
+  text-decoration: none;
+  font-size: 20px;
+  color: white;
+  display: block;
+}
+
+.sidebar .sidebar-links a:hover {
+  background-color: #afafaf;
+}
+
+.icon {
+  height: 30px;
+}
+
+.toggle-sidebar {
+  position: absolute;
+  top: 10px;
+  right: -50px;
+  cursor: pointer;
+}

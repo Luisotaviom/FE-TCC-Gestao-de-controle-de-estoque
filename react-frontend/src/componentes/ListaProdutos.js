@@ -1,21 +1,18 @@
-import React, { useState, useEffect, useMemo, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Pagination from "@material-ui/lab/Pagination";
 import ProdutosDataService from "../services/GerencyService";
-import { useTable } from "react-table";
-import styles from './css.module.css'; 
+import styles from '../CSS/listaproduto.module.css'; 
 import Select from 'react-select';
 
 const ListaDeProdutos = (props) => {
   const [produtos, definirProdutos] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState(null);
-  const produtosRef = useRef();
   const [page, setPage] = useState(1);
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(4);
   const pageSizes = [4, 8, 12];
   const [searchTerm, setSearchTerm] = useState("");
 
-  produtosRef.current = produtos;
 
   const buscarVariaveisDePaginacao = (page, pageSize, ativo, nome) => {
     let params = {};
@@ -78,9 +75,7 @@ const ListaDeProdutos = (props) => {
     setSelectedStatus(selectedOption);
   };
 
-  const openProdutos = (rowIndex) => {
-    const id = produtosRef.current[rowIndex].id;
-
+  const openProduto = (id) => {
     props.history.push("/Produtos/" + id);
   };
 
@@ -89,79 +84,23 @@ const ListaDeProdutos = (props) => {
     { value: false, label: 'Inativo' }
   ];
 
-  const columns = useMemo(
-    () => [
-      {
-        Header: "ID",
-        accessor: "id",
-      },
-      {
-        Header: "Nome",
-        accessor: "nome",
-      },
-      {
-        Header: "Fornecedor",
-        accessor: row => `${row.fornecedor_id} (${row.fornecedorNome})`,
-        id: "fornecedor", // Este é um identificador único para a coluna, necessário se você usa uma função para accessor
-      },  
-      {
-        Header: "Categoria",
-        accessor: "categoria",
-      },
-      {
-        Header: "Status",
-        accessor: "ativo",
-        Cell: ({ row }) => (
-          <div style={{ textAlign: "center" }} className={row.original.ativo ? "ativo" : "inativo"}>
-            {row.original.ativo ? "Ativo" : "Desativado"}
-          </div>
-        )
-      },
-      {
-        Header: "Ações",
-        accessor: "actions",
-        Cell: (props) => {
-          const rowIdx = props.row.id;
-          return (
-            
-            <div>
-              <span onClick={() => openProdutos(rowIdx)}>
-                <button type="button" className="btn btn-warning btn-sm">Editar</button>
-              </span>
-            </div>
-          );
-        },
-      },
-    ],
-    []
-  );
-
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-  } = useTable({
-    columns,
-    data: produtos,
-  });
-
+  
   return (
     <div className={`${styles.list} row`}>
     <div className="col-md-12">
       <h2 className={styles.h2}>Lista de Produtos</h2>
       <div className="d-flex justify-content-between mt-3">
           <div>
-            <span className="mr-2">Itens por página:</span>
-            <select className="custom-select" style={{ width: 'auto' }} onChange={handlePageSizeChange} value={pageSize}>
-              {pageSizes.map((size) => (
-                <option key={size} value={size}>
-                  {size}
-                </option>
-              ))}
-            </select>
+              <span className="mr-2">Itens por página:</span>
+              <select className={`${styles.select}`} onChange={handlePageSizeChange} value={pageSize}>
+            {pageSizes.map((size) => (
+              <option key={size} value={size}>
+                {size}
+              </option>
+            ))}
+          </select>
           </div>
+
           <div>
             <span className="mr-2">Status:</span>
             <Select
@@ -186,24 +125,37 @@ const ListaDeProdutos = (props) => {
           </div>
         </div>
 
-          <Pagination
-            color="primary"
-            className="my-3"
-            count={count}
-            page={page}
-            siblingCount={1}
-            boundaryCount={1}
-            variant="outlined"
-            onChange={handlePageChange}
-          />
+        <div className={styles.cardContainer}>
+        {produtos.map((produto) => (
+          <div key={produto.id} className={styles.card}>
+            <div className={styles.cardHeader}>
+              <h5>{produto.nome}</h5>
+            </div>
+            <div className={styles.cardBody}>
+              <p>Fornecedor: {`${produto.fornecedor_id} (${produto.fornecedorNome})`}</p>
+              <p>Categoria: {produto.categoria}</p>
+              <p>Status: <span className={produto.ativo ? 'ativo' : 'inativo'}>{produto.ativo ? 'Ativo' : 'Inativo'}</span></p>
+
+              <button
+                type="button"
+                className={styles.button_edit}
+                onClick={() => openProduto(produto.id)} // Corrigido para o nome correto da função
+              >
+                Editar
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+          
         </div>
 
         <table
-            {...getTableProps()}
             className={`table ${styles.listTable}`}
         >
           <thead>
-            {headerGroups.map((headerGroup) => (
+            {((headerGroup) => (
               <tr {...headerGroup.getHeaderGroupProps()}>
                 {headerGroup.headers.map((column) => (
                   <th {...column.getHeaderProps()}>
@@ -215,9 +167,9 @@ const ListaDeProdutos = (props) => {
               </tr>
             ))}
           </thead>
-          <tbody {...getTableBodyProps()}>
-            {rows.map((row, i) => {
-              prepareRow(row);
+          <tbody>
+            {((row, i) => {
+              ;
               return (
                 <tr {...row.getRowProps()}>
                   {row.cells.map((cell) => {
@@ -241,8 +193,9 @@ const ListaDeProdutos = (props) => {
               </option>
             ))}
           </select>
+
           <div>
-            <button type="button" className="btn btn-success" onClick={() => props.history.push("/ListaDeFornecedores")}>
+            <button type="button" className={`${styles.button_add}`} onClick={() => props.history.push("/ListaDeFornecedores")}>
               Criar Produto
             </button>
           </div>

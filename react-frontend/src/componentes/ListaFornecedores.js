@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useMemo, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Pagination from "@material-ui/lab/Pagination";
 import FornecedoresDataService from "../services/GerencyService2";
-import { useTable } from "react-table";
-import styles from './css.module.css'; 
+import styles from '../CSS/listaFornecedor.module.css'; 
 import Select from 'react-select';
 
 const ListaDeFornecedores = (props) => {
@@ -14,7 +13,7 @@ const ListaDeFornecedores = (props) => {
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(4);
   const pageSizes = [4, 8, 12];
-  const [selectedOptions, setSelectedOptions] = useState([]);
+  const [selectedOptions] = useState([]);
 
 
   fornecedoresRef.current = fornecedores;
@@ -104,7 +103,7 @@ const opcoesStatus = [
   };
   
 
-  useEffect(buscarFornecedores, [page, pageSize, selectedStatus]);
+  useEffect(buscarFornecedores, [page, pageSize, selectedStatus, selectedOptions]);
 
   const handlePageChange = (event, value) => {
     setPage(value);
@@ -128,128 +127,117 @@ const opcoesStatus = [
     }
     return null;
   }
-  
-
-  const columns = useMemo(
-    () => [
-      {
-        Header: "ID",
-        accessor: "id",
-      },
-      {
-        Header: "Nome",
-        accessor: "nome",
-      },
-      {
-        Header: "Cidade",
-        accessor: "cidade",
-      },
-      {
-        Header: "Telefone",
-        accessor: "celular",
-        Cell: ({ value }) => formatPhoneNumber(value) || value
-      },      
-      {
-        Header: "Email",
-        accessor: "email",
-      },
-      {
-        Header: "Status",
-        accessor: "ativo",
-        Cell: ({ row }) => (
-          <div style={{ textAlign: "center" }} className={row.original.ativo ? "ativo" : "inativo"}>
-            {row.original.ativo ? "Ativo" : "Desativado"}
-          </div>
-        )
-      },
-      {
-        Header: "Ações",
-        accessor: "actions",
-        Cell: (props) => {
-          const rowIdx = props.row.id;
-
-          return (
-            <div className="action-buttons">
-              <span onClick={() => openFornecedores(rowIdx)}>
-                <button type="button" className="btn btn-warning btn-sm action-button">Editar fornecedor</button>
-              </span>
-              <span onClick={() => openFornecedorProduto(rowIdx)}>
-                <button type="button" className="btn btn-success btn-sm action-button">Ver produtos</button>
-              </span>
-              <span onClick={() => openNovoProduto(rowIdx)}>
-                <button type="button" className="btn btn-success btn-sm action-button">Adicionar produto no fornecedor</button>
-              </span>
-            </div>
-
-          );
-        },
-      },
-    ],
-    []
-  );
-
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-  } = useTable({
-    columns,
-    data: fornecedores,
-  });
 
   return (
     <div className={`${styles.list} row`}>
     <div className="col-md-12">
       <h2 className={styles.h2}>Lista de Fornecedores</h2>
       <div className="d-flex justify-content-between mt-3">
-      <div>
-            <span className="mr-2">Itens por página:</span>
-            <select className="custom-select" style={{ width: 'auto' }} onChange={handlePageSizeChange} value={pageSize}>
-              {pageSizes.map((size) => (
-                <option key={size} value={size}>
-                  {size}
-                </option>
-              ))}
-            </select>
-          </div>
+        <div>
+          <span className="mr-2">Itens por página:</span>
+          <select className="custom-select" style={{ width: 'auto' }} onChange={handlePageSizeChange} value={pageSize}>
+            {pageSizes.map((size) => (
+              <option key={size} value={size}>
+                {size}
+              </option>
+            ))}
+          </select>
+        </div>
+
           <div>
           <span className="mr-2">Status:</span>
-            <Select
-              className="basic-single"
-              classNamePrefix="select"
-              defaultValue={selectedOptions}
-              isClearable={true}
-              isSearchable={true}
-              name="status"
-              options={opcoesStatus}
-              onChange={handleStatusChange}
-            />
-          </div>
-            <button type="button" className="btn btn-success" onClick={() => props.history.push("/NovoFornecedor")}>
-              Criar Fornecedores
-            </button>
+          <Select
+            className="basic-single"
+            classNamePrefix="select"
+            defaultValue={selectedOptions}
+            isClearable={true}
+            isSearchable={true}
+            name="status"
+            options={opcoesStatus}
+            onChange={handleStatusChange}
+            styles={{
+              control: (provided) => ({
+                ...provided,
+                minHeight: '30px',
+                height: '30px',
+                width: '200px', // Ajuste a largura conforme necessário
+              }),
+              indicatorsContainer: (provided) => ({
+                ...provided,
+                height: '30px',
+              }),
+              clearIndicator: (provided) => ({
+                ...provided,
+                padding: '5px',
+              }),
+              dropdownIndicator: (provided) => ({
+                ...provided,
+                padding: '5px',
+              }),
+              valueContainer: (provided) => ({
+                ...provided,
+                height: '30px',
+                padding: '0 6px',
+              }),
+              input: (provided) => ({
+                ...provided,
+                margin: '0px',
+              }),
+              singleValue: (provided) => ({
+                ...provided,
+                fontSize: '14px',
+              }),
+            }}
+          />
+
+          <div className={styles.cardContainer}>
+            {fornecedores.map((fornecedor) => (
+              <div key={fornecedor.id} className={styles.card}>
+                <div className={styles.cardHeader}>
+                  <h5>{fornecedor.nome}</h5>
+                </div>
+                <div className={styles.cardBody}>
+                  <p>Cidade: {fornecedor.cidade}</p>
+                  <p>Telefone: {formatPhoneNumber(fornecedor.celular)}</p>
+                  <p>Email: {fornecedor.email}</p>
+                  <p>Status: <span className={fornecedor.ativo ? 'ativo' : 'inativo'}>{fornecedor.ativo ? 'Ativo' : 'Inativo'}</span></p>
+                  <div className={styles.actionButtons}>
+                    <button
+                      type="button"
+                      className={`${styles.button_edit} ${styles.editButton}`}
+                      onClick={() => openFornecedores(fornecedor.id)}
+                    >
+                      Editar fornecedor
+                    </button>
+                    <button
+                      type="button"
+                      className={`${styles.button_ver} ${styles.viewProductsButton}`}
+                      onClick={() => openFornecedorProduto(fornecedor.id)}
+                    >
+                      Ver produtos
+                    </button>
+                    <button
+                      type="button"
+                      className={`${styles.button_add} ${styles.addProductButton}`}
+                      onClick={() => openNovoProduto(fornecedor.id)}
+                    >
+                      Adicionar produto
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
 
-          <Pagination
-            color="primary"
-            className="my-3"
-            count={count}
-            page={page}
-            siblingCount={1}
-            boundaryCount={1}
-            variant="outlined"
-            onChange={handlePageChange}
-          />
+          </div>
+          </div>
         </div>
 
         <table
-          {...getTableProps()}
           className={`table ${styles.listTable}`}
         >
           <thead>
-            {headerGroups.map((headerGroup) => (
+            {((headerGroup) => (
               <tr {...headerGroup.getHeaderGroupProps()}>
                 {headerGroup.headers.map((column) => (
                   <th {...column.getHeaderProps()}>
@@ -261,9 +249,9 @@ const opcoesStatus = [
               </tr>
             ))}
           </thead>
-          <tbody {...getTableBodyProps()}>
-            {rows.map((row, i) => {
-              prepareRow(row);
+          <tbody>
+            {((row, i) => {
+              ;
               return (
                 <tr {...row.getRowProps()}>
                   {row.cells.map((cell) => {
@@ -286,6 +274,12 @@ const opcoesStatus = [
               </option>
             ))}
           </select>
+
+          <div>
+            <button type="button" className={`${styles.button_add}`} onClick={() => props.history.push("/NovoFornecedor")}>
+              Criar Fornecedores
+            </button>
+          </div>
 
           <Pagination
             color="primary"

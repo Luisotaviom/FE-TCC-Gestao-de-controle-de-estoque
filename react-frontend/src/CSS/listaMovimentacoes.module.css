@@ -1,0 +1,125 @@
+/* Estilos gerais para a listagem */
+.list {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+}
+
+.h2 {
+  text-align: center;
+  color: #000000;
+}
+
+/* Container que envolve os cartões, já definido */
+.cardContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  gap: 20px; /* Espaço entre os cartões */
+  width: 100%;
+}
+
+/* Estilos específicos para cada cartão */
+.card {
+  background-color: #fff;
+  margin: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  width: 300px;
+  overflow: hidden;
+}
+
+.cardHeader {
+  background-color: #575757;
+  color: white;
+  padding: 16px;
+  font-size: 1.25rem;
+}
+
+.cardBody {
+  padding: 10px;
+  background-color: #E1E1E1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Estilos para os botões dentro do corpo do cartão */
+.button_edit {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: #b8a609;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+  text-align: center;
+}
+
+.button_delete {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: #d30000;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+  text-align: center;
+}
+
+.button_add {
+  background-color: #429e1d; /* Cinza */
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+  text-align: center;
+  margin: 5px;
+}
+
+.button_relatorios {
+  background-color: #750ca5; 
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+  text-align: center;
+  margin: 5px;
+}
+
+
+.button:hover,
+.buttonDanger:hover {
+  opacity: 0.85;
+}
+
+/* Estilos adicionais e responsividade */
+@media (max-width: 768px) {
+  .cardContainer {
+    justify-content: center;
+  }
+
+  .card {
+    width: 90%;
+  }
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+/* Sobrescrever estilos do Material-UI para paginação, se necessário */
+.MuiPaginationItem-root {
+  color: #004494; /* Cor personalizada para itens de paginação */
+}
+
