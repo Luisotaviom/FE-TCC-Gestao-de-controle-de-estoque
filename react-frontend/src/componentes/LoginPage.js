@@ -1,8 +1,8 @@
 import React, { useContext } from "react";
-import { useHistory } from 'react-router-dom';
+import { useHistory } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthContext";
 import { useForm } from "react-hook-form";
-import '../CSS/FormularioLogin.css'; // importar o arquivo CSS
+import "../CSS/FormularioLogin.css"; // importar o arquivo CSS
 
 const FormularioLogin = () => {
   const history = useHistory();
@@ -13,7 +13,7 @@ const FormularioLogin = () => {
   const handleLogin = async (data) => {
     try {
       await signIn(data);
-      history.push('/WelcomePage'); // Redirecionar para a página inicial após o login
+      history.push("/WelcomePage"); // Redirecionar para a página inicial após o login
     } catch (error) {
       setError("Falha ao entrar. Verifique seu usuário e senha.");
     }
@@ -22,12 +22,15 @@ const FormularioLogin = () => {
   return (
     <div className="login-container">
       {error && <div className="login-alert">{error}</div>}
+      <div className="login-heading">
+        <h1>Controlex</h1>
+      </div>
       <form className="login-form" onSubmit={handleSubmit(handleLogin)}>
         {error && <div className="login-error">{error}</div>}
         <div className="form-group">
           <label htmlFor="username">Nome de Usuário:</label>
           <input
-            {...register('username')}
+            {...register("username")}
             id="username"
             type="text"
             autoComplete="username"
@@ -38,7 +41,7 @@ const FormularioLogin = () => {
         <div className="form-group">
           <label htmlFor="password">Senha:</label>
           <input
-            {...register('password')}
+            {...register("password")}
             id="password"
             type="password"
             autoComplete="current-password"
@@ -46,7 +49,9 @@ const FormularioLogin = () => {
             placeholder="Digite sua senha"
           />
         </div>
-        <button type="submit" className="login-button">Entrar</button>
+        <button type="submit" className="login-button">
+          Entrar
+        </button>
       </form>
     </div>
   );

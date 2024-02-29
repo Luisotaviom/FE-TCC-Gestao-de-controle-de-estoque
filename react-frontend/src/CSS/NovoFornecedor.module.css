@@ -1,0 +1,62 @@
+.edit-form {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 40px;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 30px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 15px;
+  font-size: 18px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.checkbox {
+  width: auto;
+}
+
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #666666;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.2s;
+}
+
+.btn_add {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #429e1d;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.2s;
+}
+
+.btn_add:hover {
+  background-color: #347e17;
+  color: white;
+}
+
+.text-success {
+  color: #28a745;
+}

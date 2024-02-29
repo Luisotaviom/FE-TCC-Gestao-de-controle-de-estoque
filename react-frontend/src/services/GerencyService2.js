@@ -1,37 +1,36 @@
-import http from "../http-common";
+import axiosInstance from "../services/axios";
 
 const get2 = (id) => {
-  return http.get(`/Fornecedores/${id}`);
+  return axiosInstance.get(`/Fornecedores/${id}`);
 };
 
 const create2 = (data) => {
-  return http.post("/Fornecedores", data);
+  return axiosInstance.post("/Fornecedores", data);
 };
 
 const update2 = (id, data) => {
-  return http.put(`/Fornecedores/${id}`, data);
+  return axiosInstance.put(`/Fornecedores/${id}`, data);
 };
 
 const remove2 = (id) => {
-  return http.delete(`/Fornecedores/${id}`);
+  return axiosInstance.delete(`/Fornecedores/${id}`);
 };
 
 const getAll2 = (params) => {
-  return http.get("/Fornecedores", { params });
+  return axiosInstance.get("/Fornecedores", { params });
 };
 
 const getStatus = (params) => {
-  return http.get("/Fornecedores/buscarPorStatus", { params });
+  return axiosInstance.get("/Fornecedores/buscarPorStatus", { params });
 };
-
 
 const GerencyServer2 = {
   getAll2,
   get2,
   create2,
   update2,
-  getStatus,
-  remove2
+  remove2,
+  getStatus
 };
 
 export default GerencyServer2;

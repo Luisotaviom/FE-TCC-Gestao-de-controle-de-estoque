@@ -1,68 +1,56 @@
-import http from "../http-common";
+import axiosInstance from "../services/axios";
 
 const get = (id) => {
-  return http.get(`/Movimentacoes/${id}`);
+  return axiosInstance.get(`/Movimentacoes/${id}`);
 };
 
 const create = (data) => {
-  return http.post(`/Movimentacoes`, data);
+  return axiosInstance.post(`/Movimentacoes`, data);
 };
 
 const update = (id, data) => {
-  return http.put(`/Movimentacoes/${id}`, data);
+  return axiosInstance.put(`/Movimentacoes/${id}`, data);
 };
 
 const remove = (id) => {
-  return http.delete(`/Movimentacoes/${id}`);
+  return axiosInstance.delete(`/Movimentacoes/${id}`);
 };
 
 const getAll = (params) => {
-  return http.get("/Movimentacoes", { params });
+  return axiosInstance.get("/Movimentacoes", { params });
 };
 
-const getTipos = (params) => {
-  return http.get("/Movimentacoes/buscarPorTipo", { params });
+const getTipoCategoria = (params) => {
+  return axiosInstance.get("/Movimentacoes/buscarTipoCategoria", {
+    params,
+  });
 };
 
-const getCategoria = (params) => {
-  return http.get("/Movimentacoes/buscarPorCategoria", { params });
-};
-
-const getData = (params) => {
-  return http.get("/Movimentacoes/buscarPorData", { params });
-};
-
-const getDataETipo = (params) => {
-  return http.get("/Movimentacoes/buscar", { params });
-};
-
-const getRelatorioSemanal= (params) => {
-  return http.get("Movimentacoes/relatorio/semanal", { params });
+const getRelatorioSemanal = (params) => {
+  return axiosInstance.get("/Movimentacoes/relatorio/semanal", { params });
 };
 
 const getRelatorioMensal = (params) => {
-  return http.get("/Movimentacoes/relatorio/mensal", { params });
+  const defaultParams = { size: 100, ...params };
+  return axiosInstance.get("/Movimentacoes/relatorio/mensal", {
+    params: defaultParams,
+  });
 };
 
 const getTiposRelatorios = (params) => {
-  return http.get("/Movimentacoes/buscarPorTipo", { params });
+  return axiosInstance.get("/Movimentacoes/buscarPorTipo", { params });
 };
-
 
 const GerencyServerMov = {
   getAll,
   get,
   create,
   update,
-  getTipos,
   remove,
-  getData,
-  getDataETipo,
-  getCategoria,
+  getTipoCategoria,
   getRelatorioSemanal,
   getRelatorioMensal,
-  getTiposRelatorios
+  getTiposRelatorios,
 };
-
 
 export default GerencyServerMov;

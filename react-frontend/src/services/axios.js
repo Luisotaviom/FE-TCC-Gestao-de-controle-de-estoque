@@ -8,7 +8,7 @@ const instance = axios.create({
 
 // Adiciona um interceptor que modifica a configuração de todas as solicitações antes de serem enviadas
 instance.interceptors.request.use((config) => {
-  const { "finder-token": token } = parseCookies();
+  const { "auth-api": token } = parseCookies();
   console.log("Interceptor chamado, token:", token);
   if (token) {
     config.headers["Authorization"] = `Bearer ${token}`;

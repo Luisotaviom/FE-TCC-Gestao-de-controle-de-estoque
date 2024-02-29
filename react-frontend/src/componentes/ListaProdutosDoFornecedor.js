@@ -1,22 +1,46 @@
-import React, { useState, useEffect, useMemo, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Pagination from "@material-ui/lab/Pagination";
 import ListaProdutosDoFornecedorDataService from "../services/GerencyService5";
-import { useTable } from "react-table";
+import Select from "react-select";
+import styles from "../CSS/listaproduto.module.css";
 
 const ListaProdutosDoFornecedor = (props) => {
-  /**
-   * useState é um Hook do React que permite adicionar estado a componentes de função. 
-   * Neste caso, useState([]) inicializa um estado chamado "users" com um valor inicial de um array vazio []. 
-   * O array vazio é passado como um valor inicial para o estado.
-   */
   const [produtosDoFornecedor, definirListaProdutosDoFornecedor] = useState([]);
   const produtosDoFornecedorRef = useRef();
   const [page, setPage] = useState(1);
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(4);
-  const pageSizes = [4, 8, 12];
+  const pageSizes = [3, 6, 9, 12];
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   produtosDoFornecedorRef.current = produtosDoFornecedor;
+
+  useEffect(() => {
+    buscarProdutosDoFornecedor();
+  }, [page, pageSize, selectedStatus, searchTerm]);
+
+  const buscarProdutosDoFornecedor = () => {
+    setIsLoading(true);
+    const params = buscarVariaveisDePaginacao(page, pageSize);
+    const { fornecedor_id } = props.match.params;
+
+    ListaProdutosDoFornecedorDataService.getAll5(fornecedor_id, params)
+      .then((response) => {
+        const produtosDoFornecedor = response.data.content;
+        const totalPages = response.data.totalPages;
+
+        definirListaProdutosDoFornecedor(produtosDoFornecedor);
+        setCount(totalPages);
+      })
+      .catch((error) => {
+        console.error("Erro ao buscar produtos do fornecedor:", error);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
 
   const buscarVariaveisDePaginacao = (page, pageSize) => {
     let params = {};
@@ -32,28 +56,6 @@ const ListaProdutosDoFornecedor = (props) => {
     return params;
   };
 
-  const buscarProdutosDoFornecedor = () => {
-    const params = buscarVariaveisDePaginacao(page, pageSize);
-    const { fornecedor_id } = props.match.params;    
-
-    ListaProdutosDoFornecedorDataService.getAll5(fornecedor_id, params)
-      .then((response) => {
-        console.log(response)
-        const produtosDoFornecedor = response.data.content;
-        const totalPages = response.data.totalPages;
-
-        definirListaProdutosDoFornecedor(produtosDoFornecedor);
-        setCount(totalPages);
-
-        console.log(response.data);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-
-  useEffect(buscarProdutosDoFornecedor, [page, pageSize]);
-
   const handlePageChange = (event, value) => {
     setPage(value);
   };
@@ -63,61 +65,71 @@ const ListaProdutosDoFornecedor = (props) => {
     setPage(1);
   };
 
-  const openProdutos = (rowIndex) => {
-    const id = produtosDoFornecedorRef.current[rowIndex].id;
-
-    props.history.push("/Produtos/" + id);
+  const handleStatusChange = (selectedOption) => {
+    setSelectedStatus(selectedOption);
   };
 
-  const columns = useMemo(
-    () => [
-      {
-        Header: "id",
-        accessor: "id",
-      },
-      {
-        Header: "nome",
-        accessor: "nome",
-      },
-      {
-        Header: "categoria",
-        accessor: "categoria",
-      },
-      {
-        Header: "Ações",
-        accessor: "actions",
-        Cell: (props) => {
-          const rowIdx = props.row.id;
-          return (
-            
-            <div>
-              <span onClick={() => openProdutos(rowIdx)}>
-                <button type="button" className="btn btn-warning btn-sm">Editar</button>
-              </span>
-            </div>
-          );
-        },
-      },
-    ],
-    []
-  );
-
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-  } = useTable({
-    columns,
-    data: produtosDoFornecedor,
-  });
+  const openProdutos = (produtoId) => {
+    props.history.push("/Produtos/" + produtoId);
+  };
 
   return (
-    <div className="list row">
-      <div className="col-md-12 list">
+    <div className={`${styles.list} row`}>
+      <div className="col-md-12">
+        <h2 className={styles.h2}>Lista de Produtos do Fornecedor</h2>
+        <div className="d-flex justify-content-between mt-3">
+          <div>
+            <span>Status:</span>
+            <Select
+              className="basic-single"
+              classNamePrefix="select"
+              value={selectedStatus}
+              isClearable={true}
+              isSearchable={true}
+              options={[
+                { value: true, label: "Ativo" },
+                { value: false, label: "Inativo" },
+              ]}
+              onChange={handleStatusChange}
+              placeholder="Selecione o status"
+            />
+          </div>
+          <div>
+            <input
+              type="text"
+              placeholder="Buscar por nome"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+        </div>
+
+        {isLoading ? (
+          <div className="text-center">Carregando...</div>
+        ) : (
+          <div className={styles.cardContainer}>
+            {produtosDoFornecedor.map((produto) => (
+              <div key={produto.id} className={styles.card}>
+                <div className={styles.cardHeader}>
+                  <h5>{produto.nome}</h5>
+                </div>
+                <div className={styles.cardBody}>
+                  <p>Categoria: {produto.categoria}</p>
+                  <button
+                    type="button"
+                    className={styles.button_edit}
+                    onClick={() => openProdutos(produto.id)}
+                  >
+                    Editar
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
         <div className="mt-3">
-          {"Itens por página: "}
+          <span>Itens por página: </span>
           <select onChange={handlePageSizeChange} value={pageSize}>
             {pageSizes.map((size) => (
               <option key={size} value={size}>
@@ -125,9 +137,6 @@ const ListaProdutosDoFornecedor = (props) => {
               </option>
             ))}
           </select>
-
-          
-          
 
           <Pagination
             color="primary"
@@ -140,65 +149,6 @@ const ListaProdutosDoFornecedor = (props) => {
             onChange={handlePageChange}
           />
         </div>
-        
-
-        <table
-          className="table table-striped table-bordered"
-          {...getTableProps()}
-        >
-          <thead>
-            {headerGroups.map((headerGroup) => (
-              <tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((column) => (
-                  <th {...column.getHeaderProps()}>
-                    {column.render("Header")}
-                  </th>
-
-
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody {...getTableBodyProps()}>
-            {rows.map((row, i) => {
-              prepareRow(row);
-              return (
-                <tr {...row.getRowProps()}>
-                  {row.cells.map((cell) => {
-                    return (
-                      <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
-                    );
-                  })}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-
-        <div className="mt-3">
-          {"Itens por página: "}
-          <select onChange={handlePageSizeChange} value={pageSize}>
-            {pageSizes.map((size) => (
-              <option key={size} value={size}>
-                {size}
-              </option>
-            ))}
-          </select>
-
-          <Pagination
-            color="primary"
-            className="my-3"
-            count={count}
-            page={page}
-            siblingCount={1}
-            boundaryCount={1}
-            variant="outlined"
-            onChange={handlePageChange}
-          />
-        </div>
-        
-
-
       </div>
     </div>
   );

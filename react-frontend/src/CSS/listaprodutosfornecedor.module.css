@@ -1,0 +1,104 @@
+.list {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+}
+
+.h2 {
+  text-align: center;
+  color: #000000;
+}
+
+.cardContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  width: 100%; /* Ajuste a largura conforme necessário */
+}
+
+.card {
+  background-color: #fff;
+  margin: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  width: 300px; /* ou a largura que preferir */
+  overflow: hidden; /* Para bordas arredondadas nos filhos */
+}
+
+.cardHeader {
+  background-color: #575757;
+  color: white;
+  padding: 16px;
+  font-size: 1.25rem;
+}
+
+.cardBody {
+  padding: 10px;
+  background-color: #e1e1e1;
+  display: flex;
+  flex-direction: column; /* Organiza os itens em coluna */
+}
+
+.button_edit {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: #b8a609;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px; /* Espaço acima do botão */
+  text-align: center;
+}
+
+.button_add {
+  background-color: #429e1d; /* Cinza */
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+  text-align: center;
+  margin: 5px;
+}
+
+.button:hover {
+  background-color: #545454;
+}
+
+.my-3 {
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+
+/* Sobrescrever estilos do Material-UI se necessário */
+.MuiPaginationItem-root {
+  color: #004494; /* Cor dos itens de paginação */
+}
+
+@media (max-width: 768px) {
+  .cardContainer {
+    justify-content: center;
+  }
+
+  .card {
+    width: 90%;
+  }
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.ativo {
+  color: green;
+}
+
+.inativo {
+  color: red;
+}

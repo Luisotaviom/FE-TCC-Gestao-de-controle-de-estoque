@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import MovimentacoesDataService from "../services/GerencyServiceMov";
+import styles from "../CSS/update.module.css"; // Certifique-se de ter o arquivo CSS correspondente
 
 const Movimentacoes = (props) => {
   const [currentMovimentacao, setCurrentMovimentacao] = useState({
@@ -35,11 +36,14 @@ const Movimentacoes = (props) => {
 
   const updateMovimentacao = () => {
     // Verifique se a dataRegistro tem exatamente 16 caracteres
-    if (currentMovimentacao.dataRegistro && currentMovimentacao.dataRegistro.length === 16) {
+    if (
+      currentMovimentacao.dataRegistro &&
+      currentMovimentacao.dataRegistro.length === 16
+    ) {
       // Adicione ":00" à data formatada
-      currentMovimentacao.dataRegistro += ':00';
+      currentMovimentacao.dataRegistro += ":00";
     }
-  
+
     // Agora, faça a solicitação de atualização com a data formatada
     MovimentacoesDataService.update(currentMovimentacao.id, currentMovimentacao)
       .then((response) => {
@@ -47,72 +51,112 @@ const Movimentacoes = (props) => {
       })
       .catch((error) => {
         console.error("Erro ao atualizar a movimentação: ", error);
-        setMessage("Erro ao atualizar a movimentação. Verifique os campos e tente novamente.");
+        setMessage(
+          "Erro ao atualizar a movimentação. Verifique os campos e tente novamente."
+        );
       });
   };
-  
-  
 
   const voltarParaLista = () => {
     props.history.push("/ListaDeMovimentacoes");
   };
 
-  const generateInput = (name, label, type, required) => (
-    <div className="form-group" key={name}>
-      <label htmlFor={name}>{label}</label>
-      <input
-        type={type}
-        className="form-control"
-        id={name}
-        name={name}
-        required={required}
-        value={currentMovimentacao[name]}
-        onChange={handleInputChange}
-      />
-    </div>
-  );
-
-  const generateSelect = (name, label, options) => (
-    <div className="form-group" key={name}>
-      <label htmlFor={name}>{label}</label>
-      <select
-        className="form-control"
-        id={name}
-        name={name}
-        required
-        value={currentMovimentacao[name]}
-        onChange={handleInputChange}
-      >
-        {options.map((option) => (
-          <option key={option} value={option}>
-            {option === "" ? "Selecione o Tipo" : option}
-          </option>
-        ))}
-      </select>
-    </div>
-  );
-
   return (
-    <div>
+    <div className={styles.produtoEditContainer}>
       {currentMovimentacao ? (
-        <div className="edit-form">
+        <div className={styles.produtoEditForm}>
           <h4>Movimentação</h4>
           <form>
-            {generateInput("produto_id", "Produto ID", "text", true)}
-            {generateInput("quantidade", "Quantidade", "text", true)}
-            {generateInput("valor", "Valor", "text", true)}
-            {generateSelect("tipo", "Tipo", ["", "E", "S"])}
-            {generateInput("dataRegistro", "Data de Registro", "datetime-local", true)}
-            {generateInput("fornecedor_id", "Fornecedor ID", "text", true)}
-
-            <button type="button" onClick={updateMovimentacao} className="btn btn-success btn-sm">
+            <div className={styles.formGroup}>
+              <label htmlFor="produto_id">Produto ID:</label>
+              <input
+                type="text"
+                className={styles.formControl}
+                id="produto_id"
+                name="produto_id"
+                required
+                value={currentMovimentacao.produto_id}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className={styles.formGroup}>
+              <label htmlFor="quantidade">Quantidade:</label>
+              <input
+                type="text"
+                className={styles.formControl}
+                id="quantidade"
+                name="quantidade"
+                required
+                value={currentMovimentacao.quantidade}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className={styles.formGroup}>
+              <label htmlFor="valor">Valor:</label>
+              <input
+                type="text"
+                className={styles.formControl}
+                id="valor"
+                name="valor"
+                required
+                value={currentMovimentacao.valor}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className={styles.formGroup}>
+              <label htmlFor="tipo">Tipo:</label>
+              <select
+                className={styles.formControl}
+                id="tipo"
+                name="tipo"
+                required
+                value={currentMovimentacao.tipo}
+                onChange={handleInputChange}
+              >
+                <option value="">Selecione o Tipo</option>
+                <option value="E">E</option>
+                <option value="S">S</option>
+              </select>
+            </div>
+            <div className={styles.formGroup}>
+              <label htmlFor="dataRegistro">Data de Registro:</label>
+              <input
+                type="datetime-local"
+                className={styles.formControl}
+                id="dataRegistro"
+                name="dataRegistro"
+                required
+                value={currentMovimentacao.dataRegistro}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className={styles.formGroup}>
+              <label htmlFor="fornecedor_id">Fornecedor ID:</label>
+              <input
+                type="text"
+                className={styles.formControl}
+                id="fornecedor_id"
+                name="fornecedor_id"
+                required
+                value={currentMovimentacao.fornecedor_id}
+                onChange={handleInputChange}
+              />
+            </div>
+            <button
+              type="button"
+              onClick={updateMovimentacao}
+              className={styles.btn_put}
+            >
               Atualizar
             </button>{" "}
-            <button onClick={voltarParaLista} className="btn btn-secondary btn-sm">
+            <button onClick={voltarParaLista} className={styles.btn}>
               Voltar
             </button>
-
-            {message && <strong><p className="text-success">{message}</p></strong>}
+            {message && (
+              <strong>
+                <p className="text-success">{message}</p>
+              </strong>
+            )}
           </form>
         </div>
       ) : (

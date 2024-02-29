@@ -1,133 +1,152 @@
 import React, { useState } from "react";
 import FornecedorDataService from "../services/GerencyService2";
+import styles from "../CSS/NovoFornecedor.module.css"; // Importe o arquivo CSS como módulo
 
 const NovoFornecedor = (props) => {
-  const initialFornecedortate = {
+  const initialFornecedorState = {
     id: null,
     nome: "",
     cidade: "",
     celular: "",
     email: "",
-    ativo: true 
+    ativo: true,
   };
-  const [Fornecedor, setFornecedor] = useState(initialFornecedortate);
-  const [submitted, setSubmitted] = useState(false);
 
-  const handleInputChange = event => {
+  const [fornecedor, setFornecedor] = useState(initialFornecedorState);
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setFornecedor({ ...Fornecedor, [name]: value });
+    setFornecedor({ ...fornecedor, [name]: value });
   };
 
   const saveFornecedor = () => {
-    var data = {
-      nome: Fornecedor.nome,
-      cidade: Fornecedor.cidade,
-      celular: Fornecedor.celular,
-      email: Fornecedor.email,
-      ativo: Fornecedor.ativo 
+    // Verifica se todos os campos estão preenchidos
+    if (
+      !fornecedor.nome ||
+      !fornecedor.cidade ||
+      !fornecedor.celular ||
+      !fornecedor.email
+    ) {
+      setError("Por favor, preencha todos os campos.");
+      return;
+    }
+
+    // Verifica se o email contém o símbolo "@"
+    if (!fornecedor.email.includes("@")) {
+      setError("Por favor, insira um endereço de email válido.");
+      return;
+    }
+
+    const data = {
+      nome: fornecedor.nome,
+      cidade: fornecedor.cidade,
+      celular: fornecedor.celular,
+      email: fornecedor.email,
+      ativo: fornecedor.ativo,
     };
 
     FornecedorDataService.create2(data)
-      .then(response => {
+      .then((response) => {
         setFornecedor({
           id: response.data.id,
           nome: response.data.nome,
           cidade: response.data.cidade,
           celular: response.data.celular,
           email: response.data.email,
-          ativo: response.data.ativo
+          ativo: response.data.ativo,
         });
         setSubmitted(true);
-        console.log(response.data);
       })
-      .catch(e => {
+      .catch((e) => {
         console.log(e);
       });
   };
 
   const newFornecedor = () => {
-    setFornecedor(initialFornecedortate);
+    setFornecedor(initialFornecedorState);
     setSubmitted(false);
   };
 
-  const voltarParaLista = () => {
-    props.history.push("/ListaDeFornecedores");
-  };
-
   return (
-    <div className="edit-form">
+    <div className={styles["edit-form"]}>
       {submitted ? (
         <div>
-          <strong><p className="text-success">Criada com sucesso!</p></strong>
-          <button className="btn btn-success" onClick={newFornecedor}>
+          <strong>
+            <p className={styles["text-success"]}>Criado com sucesso!</p>
+          </strong>
+          <button className={`${styles["btn_add"]}`} onClick={newFornecedor}>
             Criar fornecedor
-          </button>
-          &nbsp;
-          <button className="btn btn-success" onClick={voltarParaLista}>
-           Voltar para lista
+          </button>{" "}
+          <button className={`${styles["btn"]}`} onClick={props.history.goBack}>
+            Voltar para lista
           </button>
         </div>
       ) : (
         <div>
-          <div className="form-group">
+          {error && <div className={styles["error-message"]}>{error}</div>}
+          <div className={styles["form-group"]}>
             <label htmlFor="nome">Nome</label>
             <input
               type="text"
-              className="form-control"
+              className={`form-control ${styles["form-control"]}`}
               id="nome"
               required
-              value={Fornecedor.nome}
+              value={fornecedor.nome}
               onChange={handleInputChange}
               name="nome"
             />
           </div>
-          <div className="form-group">
+          <div className={styles["form-group"]}>
             <label htmlFor="cidade">Cidade</label>
             <input
               type="text"
-              className="form-control"
+              className={`form-control ${styles["form-control"]}`}
               id="cidade"
               required
-              value={Fornecedor.cidade}
+              value={fornecedor.cidade}
               onChange={handleInputChange}
               name="cidade"
             />
           </div>
-          <div className="form-group">
+          <div className={styles["form-group"]}>
             <label htmlFor="celular">Telefone</label>
             <input
               type="text"
-              className="form-control"
+              className={`form-control ${styles["form-control"]}`}
               id="celular"
               required
-              value={Fornecedor.celular}
+              value={fornecedor.celular}
               onChange={handleInputChange}
               name="celular"
             />
           </div>
-          <div className="form-group">
+          <div className={styles["form-group"]}>
             <label htmlFor="email">Email</label>
             <input
               type="email"
-              className="form-control"
+              className={`form-control ${styles["form-control"]}`}
               id="email"
               required
-              value={Fornecedor.email}
+              value={fornecedor.email}
               onChange={handleInputChange}
               name="email"
             />
           </div>
-          <div className="form-group">
+          <div className={styles["form-group"]}>
             <label htmlFor="ativo">Ativo</label>
             <input
               type="checkbox"
-              className="form-control"
+              className={`form-control ${styles["form-control"]}`}
               id="ativo"
-              checked={Fornecedor.ativo}
-              onChange={() => setFornecedor({ ...Fornecedor, ativo: !Fornecedor.ativo })}
+              checked={fornecedor.ativo}
+              onChange={() =>
+                setFornecedor({ ...fornecedor, ativo: !fornecedor.ativo })
+              }
             />
           </div>
-          <button onClick={saveFornecedor} className="btn btn-success">
+          <button onClick={saveFornecedor} className={`${styles["btn_add"]}`}>
             Criar fornecedor
           </button>
         </div>

@@ -1,125 +1,126 @@
 import React, { useState } from "react";
 import ProdutoDataService from "../services/GerencyService";
+import styles from "../CSS/CriarProduto.module.css"; // Certifique-se de ter o arquivo CSS correspondente
 
 const CriarProduto = (props) => {
   const fornecedorId = props.match.params.id;
+
   if (!fornecedorId) {
-      console.error("Fornecedor ID is undefined");
-      // Lidar com o caso de ID indefinido, talvez redirecionando de volta ou mostrando uma mensagem
+    console.error("Fornecedor ID is undefined");
+    // Lidar com o caso de ID indefinido, talvez redirecionando de volta ou mostrando uma mensagem
   }
 
-  const initialUserState = {
+  const initialProdutoState = {
     id: null,
     nome: "",
     fornecedor_id: "",
     categoria: "",
-    ativo: true
-    };
+    ativo: true,
+  };
 
-  const [produto, setProduto] = useState(initialUserState);
+  const [produto, setProduto] = useState(initialProdutoState);
   const [submitted, setSubmitted] = useState(false);
 
-  const executarValorAlterado = event => {
+  const handleInputChange = (event) => {
     const { name, value } = event.target;
     setProduto({ ...produto, [name]: value });
   };
 
   const salvar = () => {
-    var data = {
+    const data = {
       nome: produto.nome,
       categoria: produto.categoria,
-      ativo: produto.ativo 
+      ativo: produto.ativo,
     };
-    
+
     ProdutoDataService.create(fornecedorId, data)
-      .then(response => {
+      .then((response) => {
         setProduto({
           id: response.data.id,
           nome: response.data.nome,
           fornecedor_id: response.data.fornecedor_id,
           categoria: response.data.categoria,
-          ativo: response.data.ativo
+          ativo: response.data.ativo,
         });
-        
+
         setSubmitted(true);
       })
-      .catch(e => {
-        console.log(e);
+      .catch((error) => {
+        console.log(error);
       });
   };
 
-  const newUser = () => {
-    setProduto(initialUserState);
+  const novoProduto = () => {
+    setProduto(initialProdutoState);
     setSubmitted(false);
   };
 
   const voltarParaLista = () => {
-    props.history.push("/ListadeProdutos");
+    props.history.push("/ListadeFornecedores");
   };
 
-
   return (
-    <div className="edit-form">
+    <div className={styles.editForm}>
       {submitted ? (
         <div>
-          <strong><p className="text-success">Criado com sucesso!</p></strong>
-          <button className="btn btn-success" onClick={newUser}>
+          <strong>
+            <p className={styles.successMessage}>Criado com sucesso!</p>
+          </strong>
+          <button className={`${styles.btn_add}`} onClick={novoProduto}>
             Novo
           </button>
-          &nbsp;
-          <button className="btn btn-success" onClick={voltarParaLista}>
-           Voltar para lista
+          <button className={`${styles.btn}`} onClick={voltarParaLista}>
+            Voltar para Lista
           </button>
         </div>
       ) : (
         <div>
-          <div className="form-group">
+          <div className={styles.formGroup}>
             <label htmlFor="nome">Nome</label>
             <input
               type="text"
-              className="form-control"
+              className={styles.formControl}
               id="nome"
               required
               value={produto.nome}
-              onChange={executarValorAlterado}
+              onChange={handleInputChange}
               name="nome"
             />
           </div>
 
-          <div className="form-group">
+          <div className={styles.formGroup}>
             <label htmlFor="categoria">Categoria</label>
             <select
-              className="form-control"
+              className={styles.formControl}
               id="categoria"
               required
               value={produto.categoria}
-              onChange={executarValorAlterado}
+              onChange={handleInputChange}
               name="categoria"
             >
-           <option value="">Selecione</option>
+              <option value="">Selecione</option>
               <option value="Gás">Gás</option>
               <option value="Água">Água</option>
             </select>
           </div>
-          
-          <div className="form-group">
+
+          <div className={styles.formGroup}>
             <label htmlFor="ativo">Ativo</label>
             <input
               type="checkbox"
-              className="form-control"
+              className={styles.checkbox}
               id="ativo"
               checked={produto.ativo}
               onChange={() => setProduto({ ...produto, ativo: !produto.ativo })}
             />
           </div>
-          <button onClick={salvar} className="btn btn-success">
-            Criar produto
-          </button>
-          &nbsp;
-          <button onClick={voltarParaLista} className="btn btn-secondary">
-            Voltar 
-          </button>
 
+          <button onClick={salvar} className={`${styles.btn_add}`}>
+            Criar Produto
+          </button>
+          <button onClick={voltarParaLista} className={`${styles.btn}`}>
+            Voltar
+          </button>
         </div>
       )}
     </div>

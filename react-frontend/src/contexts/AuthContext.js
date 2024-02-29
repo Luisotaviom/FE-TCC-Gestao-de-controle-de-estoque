@@ -15,7 +15,7 @@ export function AuthProvider({ children }) {
       const response = await axiosInstance.post("/auth/login", data);
       const { token, user } = response.data;
   
-      setCookie(undefined, "finder-token", token, {
+      setCookie(undefined, "auth-api", token, {
         maxAge: 60 * 60 * 1, // 1 hour
       });
   
@@ -34,7 +34,7 @@ export function AuthProvider({ children }) {
   
 
   const fetchData = async () => {
-    const { "finder-token": token } = parseCookies();
+    const { "auth-api": token } = parseCookies();
     if (token) {
       try {
         const response = await axiosInstance.get("/auth/userInfo");

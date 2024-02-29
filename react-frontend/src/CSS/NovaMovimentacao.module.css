@@ -1,0 +1,79 @@
+/* Adicione estilos ao seu componente NovaMovimentacao */
+
+/* Container principal */
+.edit-form {
+  max-width: 500px; /* Aumentando a largura máxima */
+  margin: 20px auto; /* Adicionando margens para os lados e para cima/para baixo */
+  padding: 30px; /* Aumentando o preenchimento */
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+/* Estilo para grupos de formulário */
+.form-group {
+  margin-bottom: 25px; /* Aumentando a margem inferior */
+}
+
+.form-group label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 8px; /* Reduzindo a margem inferior */
+}
+
+.form-control {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #666666;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.2s;
+}
+
+.btn_add {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #429e1d;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.2s;
+}
+
+.btn_add:hover {
+  background-color: #227e27;
+}
+
+.btn:hover {
+  background-color: #464646;
+}
+
+.btn_add + .btn {
+  margin-left: 10px;
+}
+
+.text-success {
+  color: #4caf50;
+}
+
+.error-message {
+  color: red;
+  font-size: 14px;
+}
+
+/* Estilize o datalist */
+datalist {
+  max-height: 150px;
+  overflow-y: auto;
+}

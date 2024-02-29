@@ -1,0 +1,87 @@
+.produtoEditContainer {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background-color: #acacac;
+}
+
+.produtoInfo {
+  cursor: pointer;
+  padding: 20px;
+  background-color: #575757;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  color: white;
+  font-size: 1.25rem;
+}
+
+.produtoEditForm {
+  padding: 20px;
+  border: 5px solid #575757;
+  border-radius: 8px;
+}
+
+.formGroup {
+  margin-bottom: 15px;
+  display: block;
+}
+
+.formControl {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #666666;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.2s;
+}
+
+.btn_put {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #429e1d;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.2s;
+}
+
+.btn:hover {
+  background-color: #3b3b3b;
+  color: white;
+}
+
+.btn_put + .btn {
+  margin-left: 10px;
+}
+
+.checkbox {
+  /* Especifica o tamanho desejado para o checkbox */
+  width: 20px;
+  height: 20px;
+}
+.selectControl {
+  /* Estilos para o elemento select */
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Estilizando as opções do select */
+.selectControl option {
+  padding: 8px;
+}

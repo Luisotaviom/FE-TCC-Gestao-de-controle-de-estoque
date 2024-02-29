@@ -1,134 +1,137 @@
 import React, { useState, useEffect } from "react";
 import FornecedoresDataService from "../services/GerencyService2";
+import styles from "../CSS/update.module.css"; // Certifique-se de ter o arquivo CSS correspondente
 
-const Fornecedores = props => {
+const Fornecedores = (props) => {
   const initialFornecedoresState = {
     id: null,
     nome: "",
     cidade: "",
     celular: "",
     email: "",
-    ativo: true
+    ativo: true,
   };
-  const [currentFornecedores, setCurrentFornecedores] = useState(initialFornecedoresState);
+
+  const [currentFornecedores, setCurrentFornecedores] = useState(
+    initialFornecedoresState
+  );
+  const [isEditing, setIsEditing] = useState(false);
   const [message, setMessage] = useState("");
 
-  const getFornecedores = id => {
-    FornecedoresDataService.get2(id)
-      .then(response => {
-        setCurrentFornecedores(response.data);
-        console.log(response.data);
-      })
-      .catch(e => {
-        console.log(e);
-      });
-  };
-
   useEffect(() => {
-    getFornecedores(props.match.params.id);
+    const getFornecedores = async () => {
+      try {
+        const response = await FornecedoresDataService.get2(
+          props.match.params.id
+        );
+        setCurrentFornecedores(response.data);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    getFornecedores();
   }, [props.match.params.id]);
 
-  const handleInputChange = event => {
-    const { name, value } = event.target;
-    if (name === "ativo") {
-      setCurrentFornecedores({ ...currentFornecedores, [name]: event.target.checked });
-    } else {
-      setCurrentFornecedores({ ...currentFornecedores, [name]: value });
-    }
+  const handleInputChange = (event) => {
+    const { name, value, checked, type } = event.target;
+    setCurrentFornecedores({
+      ...currentFornecedores,
+      [name]: type === "checkbox" ? checked : value,
+    });
   };
 
   const updateFornecedores = () => {
     FornecedoresDataService.update2(currentFornecedores.id, currentFornecedores)
-      .then(response => {
+      .then((response) => {
         console.log(response.data);
-        setMessage("Troca de informações sobre o fornecedor feita com sucesso!");
+        setMessage(
+          "Troca de informações sobre o fornecedor feita com sucesso!"
+        );
       })
-      .catch(e => {
+      .catch((e) => {
         console.log(e);
       });
   };
+
+  const toggleEdit = () => setIsEditing(!isEditing);
 
   const voltarParaLista = () => {
     props.history.push("/ListaDeFornecedores");
   };
 
-
   return (
-    <div>
-      {currentFornecedores ? (
-        <div className="edit-form">
-          <h4>Fornecedor</h4>
-          <form>
-            <div className="form-group">
-              <label htmlFor="title">Nome</label>
-              <input
-                type="text"
-                className="form-control"
-                id="nome"
-                name="nome"
-                value={currentFornecedores.nome}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="title">Cidade</label>
-              <input
-                type="text"
-                className="form-control"
-                id="cidade"
-                name="cidade"
-                value={currentFornecedores.cidade}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="title">Telefone</label>
-              <input
-                type="text"
-                className="form-control"
-                id="celular"
-                name="celular"
-                value={currentFornecedores.celular}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="title">Email</label>
-              <input
-                type="email"
-                className="form-control"
-                id="email"
-                name="email"
-                value={currentFornecedores.email}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="form-group">
-            <label htmlFor="ativo">Ativo</label>
+    <div className={styles.produtoEditContainer}>
+      <div className={styles.produtoInfo} onClick={toggleEdit}>
+        <h2>{currentFornecedores.nome}</h2>
+        <p>Cidade: {currentFornecedores.cidade}</p>
+        <p>Telefone: {currentFornecedores.celular}</p>
+        <p>Email: {currentFornecedores.email}</p>
+        <p>Ativo: {currentFornecedores.ativo ? "Sim" : "Não"}</p>
+      </div>
+      {isEditing && (
+        <div className={styles.produtoEditForm}>
+          <div className={styles.formGroup}>
+            <label htmlFor="nome">Nome:</label>
+            <input
+              type="text"
+              id="nome"
+              name="nome"
+              className={styles.formControl}
+              value={currentFornecedores.nome}
+              onChange={handleInputChange}
+            />
+          </div>
+          <div className={styles.formGroup}>
+            <label htmlFor="cidade">Cidade:</label>
+            <input
+              type="text"
+              id="cidade"
+              name="cidade"
+              className={styles.formControl}
+              value={currentFornecedores.cidade}
+              onChange={handleInputChange}
+            />
+          </div>
+          <div className={styles.formGroup}>
+            <label htmlFor="celular">Telefone:</label>
+            <input
+              type="text"
+              id="celular"
+              name="celular"
+              className={styles.formControl}
+              value={currentFornecedores.celular}
+              onChange={handleInputChange}
+            />
+          </div>
+          <div className={styles.formGroup}>
+            <label htmlFor="email">Email:</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              className={styles.formControl}
+              value={currentFornecedores.email}
+              onChange={handleInputChange}
+            />
+          </div>
+          <div className={styles.formGroup}>
+            <label htmlFor="ativo">Ativo:</label>
             <input
               type="checkbox"
-              className="form-control"
               id="ativo"
               name="ativo"
+              className={styles.checkbox}
               checked={currentFornecedores.ativo}
               onChange={handleInputChange}
             />
           </div>
-            
-          </form>
-
-          <button type="button" onClick={updateFornecedores} className="btn btn-success btn-sm">Atualizar</button>
-          &nbsp;
-          <button onClick={voltarParaLista} className="btn btn-secondary btn-sm">Voltar</button>
-
-          <strong><p className="text-success">{message}</p></strong>
-
-
-        </div>
-      ) : (
-        <div>
-          <br />
-          <p>Clique na Fornecedores...</p>
+          <button className={styles.btn_put} onClick={updateFornecedores}>
+            Atualizar
+          </button>
+          <button className={styles.btn} onClick={voltarParaLista}>
+            Voltar
+          </button>
         </div>
       )}
     </div>
