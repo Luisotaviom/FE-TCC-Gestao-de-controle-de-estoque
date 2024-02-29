@@ -1,3 +1,7 @@
+body {
+  background-color: #e1e1e1;
+}
+
 .list {
   padding: 20px;
   display: flex;
@@ -35,7 +39,7 @@
 
 .cardBody {
   padding: 10px;
-  background-color: #E1E1E1;
+  background-color: #e1e1e1;
   display: flex;
   flex-direction: column; /* Organiza os itens em coluna */
 }
@@ -85,7 +89,7 @@
   }
 
   .card {
-    width: 90%; 
+    width: 90%;
   }
 }
 
