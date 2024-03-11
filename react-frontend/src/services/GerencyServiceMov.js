@@ -31,7 +31,7 @@ const getRelatorioSemanal = (params) => {
 };
 
 const getRelatorioMensal = (params) => {
-  const defaultParams = { size: 100, ...params };
+  const defaultParams = { size: 500, ...params };
   return axiosInstance.get("/Movimentacoes/relatorio/mensal", {
     params: defaultParams,
   });

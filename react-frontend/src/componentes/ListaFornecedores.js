@@ -79,20 +79,15 @@ const ListaDeFornecedores = (props) => {
     { value: false, label: "Inativo" },
   ];
 
-  const openFornecedores = (rowIndex) => {
-    const id = fornecedoresRef.current[rowIndex].id;
-
+  const openFornecedores = (id) => {
     props.history.push("/Fornecedores/" + id);
   };
 
-  const openFornecedorProduto = (rowIndex) => {
-    const id = fornecedoresRef.current[rowIndex].id;
-
+  const openFornecedorProduto = (id) => {
     props.history.push("/Produtos/fornecedor/" + id);
   };
 
-  const openNovoProduto = (rowIndex) => {
-    const id = fornecedoresRef.current[rowIndex].id;
+  const openNovoProduto = (id) => {
     props.history.push("/Produtos/fornecedor/" + id + "/produto");
   };
 

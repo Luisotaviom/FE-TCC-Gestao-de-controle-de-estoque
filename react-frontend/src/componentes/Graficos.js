@@ -92,7 +92,7 @@ const Graficos = () => {
       .filter((mov) => mov.tipo === "S")
       .map((mov) => ({
         x: format(new Date(mov.dataRegistro), "yyyy-MM-dd"),
-        y: -mov.quantidade,
+        y: mov.quantidade,
       }));
 
     return { quantidadesEntradas, quantidadesSaidas };

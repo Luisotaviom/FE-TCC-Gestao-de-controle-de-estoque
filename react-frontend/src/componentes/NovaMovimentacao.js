@@ -143,7 +143,7 @@ const NovaMovimentacao = (props) => {
       ) : (
         <div>
           <div className={style["form-group"]}>
-            <label htmlFor="produtoId">Produto ID</label>
+            <label htmlFor="produtoId">Produto</label>
             <input
               type="text"
               className={style["form-control"]}
