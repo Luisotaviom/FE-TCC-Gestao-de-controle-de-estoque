@@ -22,7 +22,7 @@ Além disso, será necessário o npm, que já vem com a instalação do Node.js.
 Primeiro, clone o repositório do projeto para a sua máquina local:
 
 ```bash
-git clone https://github.com/Luisotaviom/TC_FE.git
+git clone https://github.com/Luisotaviom/FE-TCC-Gestao-de-controle-de-estoque.git
 ```
 
 ### Instalando dependências
